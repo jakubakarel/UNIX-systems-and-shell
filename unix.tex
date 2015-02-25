@@ -1,0 +1,472 @@
+\documentclass{article}
+\usepackage[czech]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{a4wide}
+\usepackage{graphicx}
+
+\title{\Huge{Unixové systémy a shell}\\ \vspace{1em} \normalsize{zápisky z přednášek}}
+\author{Jakub Karel}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Tento dokument vzniká jako derivát z mých zápisků z přednášek a cvičení předmětu Unixové systémy a shell vyučovaném {\Large katedře informatiky na Přírodovědecké fakultě Univerzity Palackého v Olomouci} panem Mgr. Janem Outratou, Ph.D. Použití pouze na vlastní nebezpečí -- výskyt chybných informací není vyloučen.
+\end{abstract}
+
+\thispagestyle{empty}
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+\setcounter{page}{1}
+\section{Použité prostředí}
+K vytvoření tohoto dokumentu byl použit úžasný typografický nástroj \LaTeXe. Jako testovací operační systém jsem použil Debian 7.7.0 virtualizovaný v programu VMware Workstation nad operačním systémem Windows 8.1.
+
+\section{Použité konvence}
+Všechny texty, příkazy, parametry, skripty\dots Zkrátka vše, co se zadává do terminálu a zároveň všechny odpovědi terminálu, budou vysázeny následujícím způsobem. 
+\begin{verbatim}
+ping google.com
+\end{verbatim}
+Přestože každý nový řádek v shellu vypadá nějak takto\dots
+\begin{verbatim}
+justify@debian:~$ 
+\end{verbatim}
+\dots budu v dalších ukázkách tuto část, ač je velice důležitá, pro zjednodušení vynechávat. To, že jsou všechny příkazy zakončený stiskem klávesy enter, asi není nutné zdůrazňovat. Parametry představené u některých funkcí rozhodně nejsou všechny parametry, které tyto funkce umí zpracovat. Dokonce i funkce, které jsou představeny jako funkce bez parametrů, jich umí většinou řadu zpracovat. Úroveň hloubky zkoumání tedy odpovídá aktuálním výukovým potřebám. Další informace je možné získat z manuálových stránek.
+\newpage
+
+\section{Základy systému UNIX a GNU/Linux}
+\subsection{Úvod}
+Jedním z nejvýznamnějších zástupců unixových operačních systémů je systém GNU/Linux. Tento systém je velice populární a hlavně rozšířený. Můžeme ho
+najít například v clusterech, serverech, PC, tabletech, v mobilech a v dalších zařízeních. I před velkou popularitu ale zůstává systém nepochopen a to
+především z hlediska základních principů, filosofie a uživatelských návyků. Většina \uv{řadových} uživatelů se tak při svém používání setká pouze se zlomkem možností, které se ukrývají pod grafickým uživatelským rozhraním. 
+
+Unix je prvním operačním systémem, který byl napsán ve vyšším programovacím jazyce -- v jazyce C (1973). Do té doby se programy napsané ve vyšších programovacích jazycích považovaly za příliš pomalé na to, aby mohly sloužit jako operační systém. Výměna assembleru za jazyk C dovolila programovat větší a propracovanější projekty, které se lépe udržovaly a opravovaly. Přestože je koncepce systému Unix stará přes 40 let, stále je funkční a inspirující. Při práci se systémem si všimnete jedné zajímavosti.
+
+Unixové systém jsou \uv{tiché}. To znamená, že při úspěšném vykonání nějaké operace ve většině případů uživateli nesdělí, že operace proběhla v pořádku. V případě, kdy došlo k chybě tuto chybu pochopitelně zobrazí. Toto chování vychází z historických potřeba a možností tehdejších zobrazovacích zařízení a uživatelů. Když se ještě výstup z počítače tisk na tiskárnu, bylo pochopitelně žádoucí, aby množství vytištěného textu bylo co nejmenší.
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.2]{tux.jpg}
+\end{center}
+\caption{Tux -- maskot systému}
+\end{figure}
+
+\subsection{Ovládání terminálu}
+Pro pohyb v řádku v okně terminálu slouží šipky $\leftarrow$ a $\rightarrow$. Klávesy delete a backspace slouží k mazání znaků na pozici kurzoru, respektive na pozici před kurzorem. Klávesa home slouží pro přechod na začátek řádku a klávesa end na jeho konec. Šipky $\uparrow$ a $\downarrow$ slouží k pohybu v historii příkazů
+
+\subsection{Klávesové zkratky}
+\begin{tabular}{l p{12cm}}
+CTRL + L & Smaže obrazovku shellu.\\
+CTRL + K & Text od pozice kurzoru do konce řádku přesune do schránky a z terminálu ho smaže.\\
+CTRL + Y & Vloží do řádku text, který byl uložen do schránky příkazem CTRL + K.\\
+CTRL + R & Spustí interaktivní prohledávání historie příkazů.\\
+CTRL + A & Přejde na začátek řádku.\\
+CTRL + E & Přejte na konec řádku.\\
+CTRL + D & Smaže znak na pozici kurzoru.\\
+CTRL + G & Provede ukončení akce (neplést s ukončením probíhající akce).\\
+CTRL + U & Smaže znaky od začátku řádku do pozice kurzoru.\\
+CTRL + T & Zamění poslední dva znaky a posune se vpravo.\\
+CTRL + \_ & Krok zpět -- undo.\\
+%META + \textgreater & Najde poslední příkaz.\\
+%META + \textless & Najde první příkaz.\\
+%META - L & Převede slovo na malá písmena.\\
+%META - U & Převede slovo na velká písmena.\\
+\end{tabular}
+
+\subsection{Základní příkazy v shellu}
+Zadávání příkazů je \uv{case sensitive} -- to znamená, že striktně záleží na velikosti zadávaných znaků. Příkaz \uv{ping} bude fungovat, zatímco příkaz \uv{Ping} už ne. Většině příkazů lze při volán předat řadu vstupních argumentů. Ty začínají buďto jednou pomlčkou, která je následována obecně několika málo znaky nebo dvěma pomlčkami, kde jsou to celá nezkrácená slova. 
+
+V případě nouze se jako velice zručná klávesa ukazuje tabulátor, protože dokáže doplnit rozepsané jméno programu, souboru nebo adresáře. Při první stisku doplní v případě, že je na výběr pouze jedna možnost. Pokud nedoplní, pak je možností víc a je potřeba stisknout tab ještě jednou.
+
+Z počátku je nutné seznámit se s poměrně velkým množstvím příkazů a programů, ale v začátcích je nutné se naučit alespoň tyto základní, jinak bude naše práce zdlouhavá a otravná, protože se budeme muset neustále dívat do materiálů, prohledávat manuálové stránky nebo hledat na internetu.
+
+\subsubsection{logout}
+Pokud se nejedná o grafickou emulaci terminálu ale o plnohodnotný shell, provede odhlášení ze systému. V opačném případě uživateli zahlásí:
+\begin{verbatim}
+logout
+bash: logout: not login shell: use `exit'
+\end{verbatim}
+
+\subsubsection{exit}
+Ukončí grafickou emulaci terminálu (okno terminálu v GUI). Při zavolání vrací své jméno, které se do okna terminálu vypíše ještě předtím, než se okno ukončí. Obecně funkce exit ukončuje předaný proces.
+\begin{verbatim}
+exit
+exit
+\end{verbatim}
+
+\subsubsection{passwd}
+Slouží ke změně hesla aktuálně přihlášeného uživatele. Nejprve jste požádání o současné heslo, poté o nové a poté ještě o zopakování nového heslo pro potvrzení.
+\begin{verbatim}
+passwd
+Changing password for justify.
+(current) UNIX password: 
+Enter new UNIX password: 
+Retype new UNIX password: 
+passwd: password updated successfully
+\end{verbatim}
+Můžete si všimnout, že UNIX vám pro jistotu připomene, pro jakého uživatele to vlastně měníte heslo. Při zadávání nejsou vypisovány žádné znaky (toto chování lze přenastavit tak, aby systém vypisoval zadaný zástupný znak), takže se nelekejte, že kurzor zůstává na místě.
+
+\subsubsection{echo}
+Jak už název trochu napovídá, tento program vezme cokoliv, co je mu předáno jako vstupní argument, a vypíše to jako svůj výstup do terminálu.
+\begin{verbatim}
+echo lorem ipsum
+lorem ipsum
+\end{verbatim}
+
+\subsubsection{who}
+Funkce who vypíše informace o aktuálně přihlášených uživatelích. a jejich spuštěných terminálech.
+\begin{verbatim}
+who
+justify  tty8         Feb 23 08:58 (:0)
+justify  pts/0        Feb 23 10:27 (:0)
+\end{verbatim}
+
+\subsubsection{w}
+Pracuje podobně jako who, ale zobrazuje i co uživatelé dělají -- jejich procesy a procesorový čas.
+\begin{verbatim}
+w
+10:58:11 up  4:27,  2 users,  load average: 2.28, 1.84, 1.76
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+justify  tty8     :0               08:58    6days  6.45s  0.12s gdm-session-wor
+justify  pts/0    :0               10:27    3.00s  0.13s  0.02s w
+\end{verbatim}
+
+\subsubsection{whoami}
+\uv{Who am I?} tedy \uv{Kdo jsem?} -- odpovědí systému je jméno uživatele, které se ptá. Pokud marně přemýšlíte nad tím, kde se takový příkaz dá využít, představte si správce, který má přihlášených několik terminálů, každý pod jiným uživatelem, a potřebuje na nich provádět změny. Takto snadno zjistí, v čím terminálu se právě nachází.
+\begin{verbatim}
+whoami
+justify
+\end{verbatim}
+
+\subsubsection{groups}
+Vypíše skupiny, do kterých je uživatel přiřazený.
+\begin{verbatim}
+groups 
+justify cdrom floppy audio dip video plugdev scanner bluetooth netdev
+\end{verbatim}
+
+\subsubsection{uptime}
+Zobrazí informace o systému, aktuální čas, jak dlouho systém běží, počet přihlášených uživatelů a jeho zatížení v poslední 1, 5 a 15 minutách.
+\begin{verbatim}
+uptime
+11:11:31 up  4:40,  2 users,  load average: 1.71, 1.88, 1.77
+\end{verbatim}
+
+\subsubsection{date}
+Provede jednoduchý výpis aktuálního datumu a času.
+\begin{verbatim}
+date
+Mon Feb 23 11:12:40 CET 2015
+\end{verbatim}
+
+\subsubsection{man}
+Příkaz man je velice důležitý! Slouží k zobrazení manuálových stránek jednotlivých funkcí systému, kde lze najít veškeré informace o vstupních parametrech, popis, návratové hodnoty a často dokonce i hlubší náhled do funkcionality samotné funkce. I příkaz man má svou manuálovou stránku.
+\begin{verbatim}
+man man
+\end{verbatim}
+nebo třeba
+\begin{verbatim}
+man ping
+\end{verbatim}
+Pro ukončení zobrazené manuálové stránky se používá klávesa q. Manuálové stránky jsou obvykle rozdělené na 8 očíslovaných sekcí s tím, že parametrem můžeme specifikovat, ve které sekci se mají stránky hledat (následující tabulka platí pro BSD Unix a Linux).
+
+\begin{tabular}{l p{12cm}}
+1 & obecné/uživatelské příkazy\\
+2 & systémová volání\\
+3 & funkce knihovny jazyka C\\
+4 & speciální soubory (obvykle zařízení nacházející se v /dev) a ovladače\\
+5 & formáty konfiguračních souborů a obecné zásady\\
+6 & hry a spořiče obrazovky\\
+7 & různé\\
+8 & příkazy systémové administrace a deamons\\
+\end{tabular}
+
+\begin{verbatim}
+man 8 ping
+\end{verbatim}
+
+\subsubsection{whatis}
+Prohledává manuálové stránky a vrací krátký popis -- text NAME z manuálové stránky.
+\begin{verbatim}
+whatis ping
+ping (8)             - send ICMP ECHO_REQUEST to network hosts
+\end{verbatim} 
+
+\subsubsection{apropos}
+Apropos je opět funkce na prohledávání manuálových stránek a jejich DESCRIPTION částí. Pokud najde ve stránce text předaný v parametru, vrací jméno celé stránky na výstup.
+\begin{verbatim}
+apropos ping
+Compose (5)          - X client mappings for multi-key input sequences
+blkmapd (8)          - pNFS block layout mapping daemon
+getkeycodes (8)      - print kernel scancode-to-keycode mapping table
+iagno (6)            - A disk flipping game derived from Reversi.
+l2ping (8)           - Send L2CAP echo request and receive answer
+loadunimap (8)       - load the kernel unicode-to-font mapping table
+mapscrn (8)          - load screen output mapping table
+minissdpd (1)        - daemon keeping track of UPnP devices up
+nping (1)            - Network packet generation tool / ping utility
+ntfs-3g.usermap (8)  - NTFS Building a User Mapping File
+ping (8)             - send ICMP ECHO_REQUEST to network hosts
+...
+\end{verbatim}
+
+\subsubsection{help}
+Vypíše krátkou nápovědu k shellu se základním příkazy a jejich syntaxí.
+
+\subsubsection{type}
+Vrací, zda je předaný parametr příkaz nebo program. Pokud je to příkaz, pak je zahashovaný. Příkaz type nemá manuálové stránky.
+\begin{verbatim}
+type ping
+ping is hashed (/bin/ping)
+\end{verbatim}
+Ping je tedy příkaz -- dokonce vidíme, kde se nachází na disku. Oproti tomu například editor Bluefish\dots
+\begin{verbatim}
+type Bluefish
+bash: type: Bluefish: not found
+\end{verbatim}
+\dots už příkaz není. Je to program.
+
+\subsubsection{info}	
+Prohledávání a prohlížení hypertextové dokumentace.
+
+\subsubsection{pwd (print working directory)}
+Vytiskne jméno aktuálního/pracovního adresáře.
+\begin{verbatim}
+pwd
+/home/justify
+\end{verbatim}
+
+\subsubsection{cd (change directory)}
+Změna aktuálního adresáře na adresář zadaný cestou -- může být jak relativní tak absolutní.
+\begin{verbatim}
+justify@debian:~/Dokumenty/OS2$ cd ..
+justify@debian:~/Dokumenty$ 
+\end{verbatim}
+\dots pro návrat do rodičovského adresáře
+
+\begin{verbatim}
+justify@debian:/$ cd /home/justify/Dokumenty/
+justify@debian:~/Dokumenty$
+\end{verbatim}
+
+\begin{verbatim}
+justify@debian:~/Dokumenty$ cd OS2/
+justify@debian:~/Dokumenty/OS2$
+
+\end{verbatim}
+
+\subsubsection{ls}
+Vypíše obsah aktuálního nebo předaného adresáře spolu s informacemi o nastavených přístupových právech, vlastníkovi a času vytvoření.
+
+\begin{verbatim}
+ls -l
+total 12
+drwxr-xr-x 4 justify justify 4096 Feb 18 00:49 OS2
+drwxr-xr-x 5 justify justify 4096 Dec  6 19:42 PS
+drw-r-xr-x 2 justify justify 4096 Feb 23 16:02 pokusy
+\end{verbatim}
+
+\begin{verbatim}
+ls -la
+total 20
+drwxr-xr-x  5 justify justify 4096 Feb 23 15:58 .
+drwxr-xr-x 26 justify justify 4096 Feb 23 21:40 ..
+drwxr-xr-x  4 justify justify 4096 Feb 18 00:49 OS2
+drwxr-xr-x  5 justify justify 4096 Dec  6 19:42 PS
+drw-r-xr-x  2 justify justify 4096 Feb 23 16:02 pokusy
+\end{verbatim}
+
+\begin{verbatim}
+ls /home/justify/Dokumenty/ -la
+total 20
+drwxr-xr-x  5 justify justify 4096 Feb 23 15:58 .
+drwxr-xr-x 26 justify justify 4096 Feb 23 21:40 ..
+drwxr-xr-x  4 justify justify 4096 Feb 18 00:49 OS2
+drwxr-xr-x  5 justify justify 4096 Dec  6 19:42 PS
+drw-r-xr-x  2 justify justify 4096 Feb 23 16:02 pokusy
+\end{verbatim}
+V prvních dvou příkladech je aktuální adresář právě adresář Dokumenty, v posledním případě na aktuálním adresáři nezáleží.
+
+\subsubsection{mkdir}
+Vytváří nový adresář. Jméno adresáře, popřípadě cesta, kde se má vytvořit, se předává jako parametr. Pokud není cesta specifikována, vytvoří se v aktuálním adresáři.
+\begin{verbatim}
+mkdir test-dir
+ls -la
+...
+drwxr-xr-x  2 justify justify 4096 Feb 23 22:04 test-dir
+\end{verbatim}
+
+\subsubsection{touch}
+Vytvoří nový prázdný soubor pokud je použit se jménem neexistujícího souboru. Pokud je jako parametr předán existující soubor, touch se souboru \uv{dotkne} čímž změní jeho timestamp -- časová známka posledního přístupu k souboru.
+\begin{verbatim}
+touch text-file.txt
+ls -la
+...
+-rw-r--r--  1 justify justify    0 Feb 23 22:07 text-file.txt
+\end{verbatim}
+vytvoření nového souboru
+
+\begin{verbatim}
+ls -la
+...
+drwxr-xr-x  2 justify justify 4096 Feb 23 22:04 test-dir
+
+touch test-dir
+ls -la
+...
+-rw-r--r--  1 justify justify    0 Feb 23 22:07 text-file.txt
+\end{verbatim}
+ukázka změny časové známky
+
+\subsubsection{du}
+Rekurzivně vypočítá (přesněji spíše odhadne) velikost adresářů v aktuálním adresáři. Volání je velice silně parametrizovatelné a tvar výstupu programu je tak možné silně ovlivnit.
+
+\subsubsection{file}
+Vypíše informace o souboru, který je předán jako vstupní parametr.
+\begin{verbatim}
+file helloword.cpp
+helloword.cpp: C source, ASCII text
+\end{verbatim}
+
+\subsubsection{cat}
+Vytiskne obsah souboru na standardní výstup.
+\begin{verbatim}
+cat helloword.cpp
+#include <iostream>
+
+using namespace std;
+
+int main() {
+	cout << "Hello Word!!" << endl;	
+	return 0;	
+}
+\end{verbatim}
+
+\subsubsection{more a less}
+more je filtrovací program na interaktivní procházení souborů po stránkách, obrazovku po obrazovce. less je v manuálových stránkách uvedený jako \uv{opposite of more}, je to ale program podobný more jen nabízí více možností. Další výhodou je například to, že během čtení nedochází k načtení celého souboru, což se u velkých souborů projeví rychlejším spuštěním.
+
+\subsubsection{head a tail}
+Zobrazí začátek souboru respektive jeho konec. Jako argument předáme vypisovaný soubor a taky číselný parametr, který určuje kolik řádku od začátku, respektive od konce, se má zobrazit (pokud není uvedeno, zobrazí 10 řádků).
+\begin{verbatim}
+head -1 helloword.cpp
+#include <iostream>
+\end{verbatim}
+
+\begin{verbatim}
+tail -1 helloword.cpp
+}
+\end{verbatim}
+
+\subsubsection{wc}
+Zobrazí informace o souboru -- počet řádků, slov a bajtů v tomto pořadí.
+\begin{verbatim}
+wc helloword.cpp
+  8  17 104 helloword.cpp
+\end{verbatim}
+
+\subsubsection{cp}
+Slouží ke kopírování souborů, adresářů. V případě kopírování neprázdných adresářů je třeba uvést parametr -r pro rekurzivní kopírování.
+
+\subsubsection{mv}
+Přesouvá soubory a adresáře - zároveň se používá pro přejmenovávání souborů (soubor přesuneme a umístíme pod novým jménem). Parametr -i pro interaktivní chování, -f pro nucený přístup.
+
+\subsubsection{rm}
+Mazání souborů a adresářů. U neprázdný adresářů je opět nutné uvést parametr -r pro rekurzivní přístup. Pozor, operační systém neposkytuje nástroje pro obnovu smazaných souborů.
+
+\subsubsection{find}
+Surové vyhledávání souborů na disku s obrovským množstvím nastavení (-name, -regex, -size, -type, -perm, -mmin, -mtime, -delete), která buďto ovlivňují samotné hledání nebo stanovují akce, které se provedou po nalezení souboru.
+
+\subsubsection{locate}
+Další vyhledávání souborů, které pracuje se cache souborů, takže je rychlejší.
+
+\subsubsection{chmod}
+Změna přístupových práv (viz. níže).
+
+\section{Přístupová práva v Unixu}
+V Unixu je každému souboru nebo adresáři přidělen uživatel, který je jeho vlastníkem a skupina, do které spadá. Přístupová práva se pak nastavují zvlášť pro vlastníka (u -- user), skupinu (g -- group) a ostatní (o -- others). Souborům pro jednotlivé účastníky lze přidělit právo na čtení (r -- read), zápis (w -- write) a spouštění (x -- execute). Pro adresáře pak právo na výpis podadresářů a jejich souborů (r), vytváření podadresářů a souborů (w) a vstup do adresáře (x). Pro vyznačení se používají speciální bity, ve kterých jsou přístupová práva zapsána. Přístupová práva se mění příkazem chmod -R -zadání práv.
+\subsubsection{Zadání práv symbolicky}
+Práva zadáme v tomto tvaru [ugoa][+-=][rwxXstugo]. To znamená, že nejprve zadáme, koho se změna týká (a -- all), poté uvedeme zda práva přidáváme, odebíráme a nebo nastavujeme a poté specifikujeme o jaká práva se jedná.
+\begin{verbatim}
+chmod u-w text.txt
+\end{verbatim}
+Uživateli (u -- user) odeber (-) práva na zápis (w -- write) u souboru text.txt.
+
+\begin{verbatim}
+chmod u+rw text.txt
+\end{verbatim}
+Uživalite (u -- user) přidej (+) práva na čtení (r -- read) a zápis (w -- write) u souboru text.txt.
+
+\subsubsection{Zadání práv osmičkově}
+Abychom mohli přístupová práva zadávat pomocí osmičkového zápisu, musíme si nejprve stanovit, jaké \uv{hodnoty} budou reprezentovat jaká práva. Pro čtení máme hodnotu 4 (4=r), pro zápis 2 (w=2) a pro spouštění hodnotu 1 (x=1). Práva nastavujeme pro všechny 3 skupiny současně a tak například hodnota 660 představuje práva na čtení a zápis pro uživatele a skupinu a žádná právě pro ostatní.
+
+\begin{verbatim}
+chmod 755 text.txt
+\end{verbatim}
+Uživateli nastav plná práva (čtení, zápis, spuštění), skupině a ostatním práva pro čtení a spuštění.
+
+\section{Adresářová struktura systému Unix}
+Adresářová struktura v systémech unixového typu je jedna velká stromová struktura začínající v kořenovém adresáři. Soubory, které začínají tečkou jsou skryté a nejsou viditelné, pokud o ně nepožádáme. Tato struktura obsahuje některé velice důležité adresáře s pevně přiděleným účelem, u kterých je dobré vědět, co obsahují.
+
+\subsection{Důležité adresáře}
+\begin{tabular}{l p{11cm}}
+/bin/ & základní spustitelné systémové programy pro použití všemi uživateli\\
+/boot/ & jádro systému (kernel), soubory zavaděče\\
+/dev/ & soubory reprezentující fyzická zařízení nebo pseudozařízení systému\\
+/etc/ & globální konfigurační soubory systému\\
+/home/ & domovské adresáře uživatelů\\
+/lib/ & základní sdílené knihovny systému\\
+/media/ & obsah výměnných zařízení\\
+/mnt/ & ostatní souborové systémy, které nemusí být nutně výměnná zařízení (floppy, cdrom)\\
+/opt/ & softwarové aplikace, které nejsou standardní součástí distribuce\\
+/proc/ & soubory nastavení a stavu systému a jednotlivých procesů\\
+/root/ & domovský adresář superuživatele.\\
+/sbin/ & systémové privilegované spustitelné soubory -- přístupné pro root\\
+/srv/ & serverové aplikace\\
+/sys/ & virtuální systémový adresář\\
+/tmp/ & smetiště, dočasný adresář, vytvořit zde adresář může kdokoliv, ale smazat ho může jen vlastník\\
+/usr/ & obsahuje další stromovou strukturu, který obsahuje velké množství informací o systému, jeho nastavení, jeho zdrojové kódy, spustitelné a konfigurační soubory -- veškerá data systému\\
+/var/ &  soubory, jejichž obsah se během chodu systému většinou mění\\
+/dev/mem/ & speciální soubor pro práci s pamětí\\
+/etc/passwd/ & hesla uživatelů -- šifrovaná!\\
+/etc/fstab/& (FileSystem TABle) popisuje jednotlivé systémové svazky\\
+\end{tabular} 
+
+\section{Systém procesů}
+Program je spustitelný soubor. Proces je aktivní reprezentace programu. Vzniká spuštěním programu. Každý proces při svém vzniku získá PID -- unikátní číselný identifikátor procesu. Plánovač procesů procesům cyklicky přiděluje výpočetní čas procesoru a umožňuje tak multitasking. Stejně jako adresářová struktura je i systém procesů stromová hierarchie. Kořenový proces se jmenuje init a má PID 1. Je to proces, který běží vždy, když běžím systém. Každý proces musí mít nastaveného předka (rodiče).
+
+\subsection{Výpis procesů}
+\subsubsection{ps aux}
+Vypíše všechny běžící procesy na standardní výstup. 
+\subsubsection{top}
+Jak už název napovídá, toto zobrazení je nejlepší. Výpis v hlavičce obsahuje statistické informace o celkovém množství běžících procesů, kolik z nich aktuálně běží, kolik jich je zastavené, spí nebo je zombie. Dále zobrazuje souhrnné informace o operační paměti a procesoru. Tabulka procesů je seřazená podle \% využití procesoru, navíc se sama po několika vteřinách aktualizuje.
+\subsubsection{pstree}
+Zobrazení stromové ASCII art hierarchie procesů.
+
+\subsection{Ukončení procesu}
+\subsubsection{kill}
+Příkaz kill násilně ukončí proces. Funguje tak, že procesu pošle číselný signál. K některým signálům lze implementovat jejich zpracování v programu, některým se ale nelze bránit. K bezprostřednímu ukončení procesu zle použít signál 9. V příkladu číslo 544 reprezentuje PID ukončovaného procesu.
+\begin{verbatim}
+kill -9 544 
+\end{verbatim}
+
+Informace o signálech, které je možné používat a k čemu lze nalézt v manuálových stránkách pomocí příkazu:
+\begin{verbatim}
+man 7 signal
+\end{verbatim}
+
+Při ukončení proces vrací svému rodiči číselnou hodnotu. Konvence a zvyklosti stanovují, že pokud program vrátí hodnotu 0, jeho výpočet skončil v pořádku. Jakákoliv nenulová hodnota znamená chybu. Při ukončení procesu jsou ukončeny i jeho potomci -- rodič má zodpovědnost za svoje rodiče, tedy i za jejich korektní ukončení. Rodič může zařídit, aby nebyli při jeho smrti ukončeni jeho potomci. Pokud je rodič ukončen a jeho potomci zůstávají, nastaví se jejich rodič (protože každý proces musí mít nastaveného rodiče) na proces init (PID 1).
+
+\subsection{Plánované spouštění programů}
+\subsubsection{at}
+Slouží k jednorázovému plánovanému spuštění procesu. Jako parametr se předá jméno souboru, který se ve stanovenou dobu spustí. 
+\subsubsection{cron}
+Podobně jako at umožňuje spustit plánovaný proces ale s tím rozdílem, že umožňuje periodické spouštění. 
+
+\subsection{Priority procesů}
+
+
+
+
+\end{document}
