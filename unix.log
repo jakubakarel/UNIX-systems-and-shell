@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.4)  25 FEB 2015 22:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.4)  26 FEB 2015 12:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -295,18 +295,18 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 ) (./unix.aux)
 \openout1 = `unix.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 13.
+LaTeX Font Info:    ... okay on input line 13.
 
 (d:/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -370,11 +370,11 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 11.
+(Font)              <12> on input line 14.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 11.
+(Font)              <8> on input line 14.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 11.
+(Font)              <6> on input line 14.
  [1
 
 {d:/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./unix.toc
@@ -390,13 +390,13 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 [3] [1] <tux.jpg, id=25, 680.5425pt x 803.25093pt>
 File: tux.jpg Graphic file (type jpg)
  <use tux.jpg>
-Package pdftex.def Info: tux.jpg used on input line 51.
+Package pdftex.def Info: tux.jpg used on input line 56.
 (pdftex.def)             Requested size: 136.10608pt x 160.64734pt.
  [2 <./tux.jpg>] [3] [4] [5] [6] [7] [8] [9] [10] [11] (./unix.aux) ) 
 Here is how much of TeX's memory you used:
  2258 strings out of 493107
  29901 string characters out of 6138433
- 102907 words of memory out of 5000000
+ 102986 words of memory out of 5000000
  5692 multiletter control sequences out of 15000+600000
  8969 words of font info for 32 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -412,7 +412,7 @@ b><d:/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><d:/texli
 ve/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb><d:/texlive/2014/tex
 mf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><d:/texlive/2014/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on unix.pdf (14 pages, 270174 bytes).
+Output written on unix.pdf (14 pages, 267447 bytes).
 PDF statistics:
  95 PDF objects out of 1000 (max. 8388607)
  66 compressed objects within 1 object stream
