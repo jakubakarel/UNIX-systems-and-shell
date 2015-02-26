@@ -1,0 +1,43 @@
+
+(OK) CTRL+ALT+T spustí terminálové okno
+(OK) CTRL+SHIFT+Q uzavření terminálového okna
+(FIXED)	meta ... Zkratka jaké klávesy ? :D
+(FIXED)	CTRL+G ? Nope, ctrl+c
+
+
+
+3.4
+(OK) -MOŽNÁ bych dodal dvojité poklepání tab - vyvolání speciální akce pro příkaz například pro cd h, se vypíšou všechny soubory začínající na písmeno h.
+(FIXED)	-u apropos chybi apropos ping
+(OK)	-přídat příkaz clear
+	 -u příkazu cd
+(OK)		Pro přesun do kořenového adresáře, použijte „cd /„
+(OK)		Pro přesun do vašeho domovského adresáře, použijte „cd“
+(OK)		Pro přesun do nadřazeného adresáře (o 1 úroveň výše), použijte „cd ..“
+(OK)			Pro přesun do minulého adresáře (posledního před současným), použijte „cd -„
+(OK)	- u ls - bez parametru vypíše pouze obsah daného adresáře, přídáním parametru l docílíme vypsání obsahu adresáře i s právy a parametr al rozsírí vypís i
+	na adresář ve kterém se soubory nachází
+(OK)	- rm ... defaultne je nastavené takzvane bezpečné mazani, tedy terminal se bude ptat jestli chcete tenhle soubor smazat či nikoli, dá se ovlivnit pomocít
+	parametrů -i (interakce=bude se ptát) nebo -f (noninterakce=nebude se ptát)
+
+3.5
+(OK)	-přidal bych výpis pomocí ls -l, kde jsou vidět nejenom práva ale první znak vzdycky znamená, co za typ souboru to je
+(OK)		Linux používá 7 typů souborů:
+		- - obyčejný soubor
+		d - adresář
+		l - odkaz
+		c - speciální soubor
+		s - socket
+		p - pojmenovaná roura
+		d - blokové zařízení
+(DENIED)	chybí !  = nastavit právo regulérne jako má skupina
+(OK)	změna práv: chmod, paramter velké R je pro rekurzivní zadávání
+
+3.6
+	-pokud jsem ho poslouchal minule správně tak:
+(FIXED)		etc/passwd - informace o uživateli
+(OK)		etc/shadow - hesla uzivatelů (čitelný jenom pro roota a jsou uloženy pouze hashe)
+(DENIED)		proc/ - adresař, ve kterém je spousta dynamických souborů generovaný jádrem, informace o procesorech a systému samotném například
+(OK)			- full - soubor ktery je plny dobry pro testovani, kdy potrebujeme osetrit vyjimku, kdy do soubor nelze zapisovat
+(OK)		- null -  černá díra, výhodne pro presmerovaní vystupu který nas nezajima
+(OK)		- kcore - obraz celé virtuální paměti systému

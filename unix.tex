@@ -62,28 +62,30 @@ Unixové systém jsou \uv{tiché}. To znamená, že při úspěšném vykonání
 Pro pohyb v řádku v okně terminálu slouží šipky $\leftarrow$ a $\rightarrow$. Klávesy delete a backspace slouží k mazání znaků na pozici kurzoru, respektive na pozici před kurzorem. Klávesa home slouží pro přechod na začátek řádku a klávesa end na jeho konec. Šipky $\uparrow$ a $\downarrow$ slouží k pohybu v historii příkazů
 
 \subsection{Klávesové zkratky}
-\begin{tabular}{l p{12cm}}
-CTRL + L & Smaže obrazovku shellu.\\
-CTRL + K & Text od pozice kurzoru do konce řádku přesune do schránky a z terminálu ho smaže.\\
-CTRL + Y & Vloží do řádku text, který byl uložen do schránky příkazem CTRL + K.\\
-CTRL + R & Spustí interaktivní prohledávání historie příkazů.\\
-CTRL + A & Přejde na začátek řádku.\\
-CTRL + E & Přejte na konec řádku.\\
-CTRL + D & Smaže znak na pozici kurzoru.\\
-CTRL + G & Provede ukončení akce (neplést s ukončením probíhající akce).\\
-CTRL + U & Smaže znaky od začátku řádku do pozice kurzoru.\\
-CTRL + T & Zamění poslední dva znaky a posune se vpravo.\\
-CTRL + \_ & Krok zpět -- undo.\\
-%META + \textgreater & Najde poslední příkaz.\\
-%META + \textless & Najde první příkaz.\\
-%META - L & Převede slovo na malá písmena.\\
-%META - U & Převede slovo na velká písmena.\\
+Klávesa C v následující tabulce reprezentuje klávesu CTRL.
+\begin{table}
+\begin{tabular}{l l}
+C + L & Smaže obrazovku shellu (lze také použít příkaz clear).\\
+C + K & Text od pozice kurzoru do konce řádku přesune do schránky a smaže.\\
+C + Y & Vloží do řádku text, který byl uložen do schránky příkazem CTRL~+~K.\\
+C + R & Spustí interaktivní prohledávání historie příkazů.\\
+C + A & Přejde na začátek řádku.\\
+C + E & Přejte na konec řádku.\\
+C + D & Smaže znak na pozici kurzoru.\\
+C + G & Provede ukončení akce (neplést s ukončením probíhající akce).\\
+C + U & Smaže znaky od začátku řádku do pozice kurzoru.\\
+C + T & Zamění poslední dva znaky a posune se vpravo.\\
+C + \_ & Krok zpět -- undo.\\
+C + ALT + T & Spustí terminálové okno.\\
+C + SHIFT + Q & Uzavře terminálové okno.\\
 \end{tabular}
+\caption{Užitečné klávesové zkratky}
+\end{table}
 
 \subsection{Základní příkazy v shellu}
 Zadávání příkazů je \uv{case sensitive} -- to znamená, že striktně záleží na velikosti zadávaných znaků. Příkaz \uv{ping} bude fungovat, zatímco příkaz \uv{Ping} už ne. Většině příkazů lze při volán předat řadu vstupních argumentů. Ty začínají buďto jednou pomlčkou, která je následována obecně několika málo znaky nebo dvěma pomlčkami, kde jsou to celá nezkrácená slova. 
 
-V případě nouze se jako velice zručná klávesa ukazuje tabulátor, protože dokáže doplnit rozepsané jméno programu, souboru nebo adresáře. Při první stisku doplní v případě, že je na výběr pouze jedna možnost. Pokud nedoplní, pak je možností víc a je potřeba stisknout tab ještě jednou.
+V případě nouze se jako velice zručná klávesa ukazuje tabulátor, protože dokáže doplnit rozepsané jméno programu, souboru nebo adresáře. Při první stisku doplní jméno v případě, že je na výběr pouze jedna možnost. Pokud nedoplní, pak je možností víc. Další stisk klávesy tab pak vypíše všechny možnosti, kterými můžeme pokračovat.
 
 Z počátku je nutné seznámit se s poměrně velkým množstvím příkazů a programů, ale v začátcích je nutné se naučit alespoň tyto základní, jinak bude naše práce zdlouhavá a otravná, protože se budeme muset neustále dívat do materiálů, prohledávat manuálové stránky nebo hledat na internetu.
 
@@ -206,7 +208,7 @@ apropos ping
 Compose (5)          - X client mappings for multi-key input sequences
 blkmapd (8)          - pNFS block layout mapping daemon
 getkeycodes (8)      - print kernel scancode-to-keycode mapping table
-iagno (6)            - A disk flipping game derived from Reversi.
+iagno (6)            -	 A disk flipping game derived from Reversi.
 l2ping (8)           - Send L2CAP echo request and receive answer
 loadunimap (8)       - load the kernel unicode-to-font mapping table
 mapscrn (8)          - load screen output mapping table
@@ -231,7 +233,7 @@ Ping je tedy příkaz -- dokonce vidíme, kde se nachází na disku. Oproti tomu
 type Bluefish
 bash: type: Bluefish: not found
 \end{verbatim}
-\dots už příkaz není. Je to program.
+už příkaz není. Je to program.
 
 \subsubsection{info}	
 Prohledávání a prohlížení hypertextové dokumentace.
@@ -244,26 +246,35 @@ pwd
 \end{verbatim}
 
 \subsubsection{cd (change directory)}
-Změna aktuálního adresáře na adresář zadaný cestou -- může být jak relativní tak absolutní.
-\begin{verbatim}
-justify@debian:~/Dokumenty/OS2$ cd ..
-justify@debian:~/Dokumenty$ 
-\end{verbatim}
-\dots pro návrat do rodičovského adresáře
-
+Změna aktuálního adresáře na adresář zadaný cestou -- může být jak relativní, tak absolutní. Kromě ukázkových příkladů najdete další užitečné tvary příkazu cd v tabulce \ref{tabcd}.
 \begin{verbatim}
 justify@debian:/$ cd /home/justify/Dokumenty/
 justify@debian:~/Dokumenty$
 \end{verbatim}
+pro přechod do adresáře daného absolutní cestou
 
 \begin{verbatim}
 justify@debian:~/Dokumenty$ cd OS2/
 justify@debian:~/Dokumenty/OS2$
-
 \end{verbatim}
+pro přechod do adresáře daného relativní cestou
+\begin{table}
+\begin{center}
+\begin{tabular}{l | l}
+Příkaz & Cíl\\
+\hline
+cd .. & rodičovský adresář\\
+cd / & kořenový adresář\\
+cd & domovský adresář\\
+cd - & předchozí adresář\\
+\end{tabular}
+\end{center}
+\caption{Další použití příkazu cd}
+\label{tabcd}
+\end{table}
 
 \subsubsection{ls}
-Vypíše obsah aktuálního nebo předaného adresáře spolu s informacemi o nastavených přístupových právech, vlastníkovi a času vytvoření.
+Příkaz ls bez parametrů vypíše pouze obsah aktuálního adresáře. Přidáním parametrů můžeme docílit vypsání dalších informací o souborech, třeba informace o nastavených přístupových právech, vlastníkovi a času vytvoření.
 
 \begin{verbatim}
 ls -l
@@ -272,6 +283,25 @@ drwxr-xr-x 4 justify justify 4096 Feb 18 00:49 OS2
 drwxr-xr-x 5 justify justify 4096 Dec  6 19:42 PS
 drw-r-xr-x 2 justify justify 4096 Feb 23 16:02 pokusy
 \end{verbatim}
+Zde se trochu víc zaměříme na první písmeno na každém řádku výpisu. První písmeno nám specifikuje, o jaký typ souboru se jedná. Unixové systémy používají 7 typů souborů -- v tabulce \ref{tabfiles} je jejich výpis, těm, jejich význam není teď jasný, se budeme věnovat později.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{l | l}
+Příkaz & Cíl\\
+\hline
+- & obyčejný soubor\\
+d & adresář\\
+l & odkaz\\
+c & speciální odkaz\\
+s & socket\\
+p & pojmenovaná roura\\
+d & blokové zařízení\\
+\end{tabular}
+\end{center}
+\caption{Typy souborů v Unixových systémech}
+\label{tabfiles}
+\end{table}
 
 \begin{verbatim}
 ls -la
@@ -378,7 +408,12 @@ Slouží ke kopírování souborů, adresářů. V případě kopírování nepr
 Přesouvá soubory a adresáře - zároveň se používá pro přejmenovávání souborů (soubor přesuneme a umístíme pod novým jménem). Parametr -i pro interaktivní chování, -f pro nucený přístup.
 
 \subsubsection{rm}
-Mazání souborů a adresářů. U neprázdný adresářů je opět nutné uvést parametr -r pro rekurzivní přístup. Pozor, operační systém neposkytuje nástroje pro obnovu smazaných souborů.
+Mazání souborů a adresářů. U neprázdný adresářů je opět nutné uvést parametr -r pro rekurzivní přístup. Pozor, operační systém neposkytuje nástroje pro obnovu smazaných souborů. Příkaz rm bývá nastavený na takzvané bezpečné mazání. To znamená, že terminál bude vyžadovat potvrzení, zda chcete soubor (adresář) opravdu smazat. Toto chování lze ovlivnit pomocí parametru -i (pro interaktivní chování a -f (forced--nucené mazání bez dalších otázek).
+
+\begin{verbatim}
+rm -i copy.txt
+rm: remove regular empty file `copy.txt'? 
+\end{verbatim}
 
 \subsubsection{find}
 Surové vyhledávání souborů na disku s obrovským množstvím nastavení (-name, -regex, -size, -type, -perm, -mmin, -mtime, -delete), která buďto ovlivňují samotné hledání nebo stanovují akce, které se provedou po nalezení souboru.
@@ -390,7 +425,9 @@ Další vyhledávání souborů, které pracuje se cache souborů, takže je ryc
 Změna přístupových práv (viz. níže).
 
 \section{Přístupová práva v Unixu}
-V Unixu je každému souboru nebo adresáři přidělen uživatel, který je jeho vlastníkem a skupina, do které spadá. Přístupová práva se pak nastavují zvlášť pro vlastníka (u -- user), skupinu (g -- group) a ostatní (o -- others). Souborům pro jednotlivé účastníky lze přidělit právo na čtení (r -- read), zápis (w -- write) a spouštění (x -- execute). Pro adresáře pak právo na výpis podadresářů a jejich souborů (r), vytváření podadresářů a souborů (w) a vstup do adresáře (x). Pro vyznačení se používají speciální bity, ve kterých jsou přístupová práva zapsána. Přístupová práva se mění příkazem chmod -R -zadání práv.
+V Unixu je každému souboru nebo adresáři přidělen uživatel, který je jeho vlastníkem a skupina, do které spadá. Přístupová práva se pak nastavují zvlášť pro vlastníka (u -- user), skupinu (g -- group) a ostatní (o -- others). Souborům pro jednotlivé účastníky lze přidělit právo na čtení (r -- read), zápis (w -- write) a spouštění (x -- execute). Pro adresáře pak právo na výpis podadresářů a jejich souborů (r), vytváření podadresářů a souborů (w) a vstup do adresáře (x). Pro vyznačení se používají speciální bity, ve kterých jsou přístupová práva zapsána. 
+
+Přístupová práva se mění příkazem chmod ke kterému můžeme přidat parametr -R, který způsobí rekurzivní aplikaci změny (pokud měníme práva pro adresář, změní se stejně práva i pro všechny soubory a adresáře, které v něm jsou)
 \subsubsection{Zadání práv symbolicky}
 Práva zadáme v tomto tvaru [ugoa][+-=][rwxXstugo]. To znamená, že nejprve zadáme, koho se změna týká (a -- all), poté uvedeme zda práva přidáváme, odebíráme a nebo nastavujeme a poté specifikujeme o jaká práva se jedná.
 \begin{verbatim}
@@ -425,7 +462,8 @@ Adresářová struktura v systémech unixového typu je jedna velká stromová s
 /media/ & obsah výměnných zařízení\\
 /mnt/ & ostatní souborové systémy, které nemusí být nutně výměnná zařízení (floppy, cdrom)\\
 /opt/ & softwarové aplikace, které nejsou standardní součástí distribuce\\
-/proc/ & soubory nastavení a stavu systému a jednotlivých procesů\\
+/proc/ & soubory nastavení a stavu systému a jednotlivých procesů -- \uv{mapa stavu paměti RAM}\\
+/proc/kcore & obraz celé virtuální paměti systému.\\ 
 /root/ & domovský adresář superuživatele.\\
 /sbin/ & systémové privilegované spustitelné soubory -- přístupné pro root\\
 /srv/ & serverové aplikace\\
@@ -434,7 +472,10 @@ Adresářová struktura v systémech unixového typu je jedna velká stromová s
 /usr/ & obsahuje další stromovou strukturu, který obsahuje velké množství informací o systému, jeho nastavení, jeho zdrojové kódy, spustitelné a konfigurační soubory -- veškerá data systému\\
 /var/ &  soubory, jejichž obsah se během chodu systému většinou mění\\
 /dev/mem/ & speciální soubor pro práci s pamětí\\
-/etc/passwd/ & hesla uživatelů -- šifrovaná!\\
+/dev/null & \uv{černá díra}, bezedný kontejner, do kterého můžeme převést výstup, který nás nezajímá, zapsaná data nelze dostat zpět\\
+/dev/full & simuluje zaplněné zařízení -- když potřebujeme otestovat ošetření výjimky zápisu do plného souboru\\
+/etc/passwd/ & soubor založených uživatelů\\
+/etd/shadow & soubor uživatelských hesel a jejich vlastností (šifrované)\\
 /etc/fstab/& (FileSystem TABle) popisuje jednotlivé systémové svazky\\
 \end{tabular} 
 
