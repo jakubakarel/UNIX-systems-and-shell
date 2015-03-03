@@ -3,6 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{a4wide}
 \usepackage{graphicx}
+\usepackage{tipa}
 
 \title{\Huge{Unixové systémy a shell}\\ \vspace{1em} \normalsize{zápisky z přednášek a cvičení}}
 \author{
@@ -26,10 +27,11 @@ Děkuji kolegovi Josefu Baťákovi za jeho usilovnou práci při psaní důkladn
 \newpage
 
 \setcounter{page}{1}
-\section{Použité prostředí}
+\section{První intermezzo}
+\subsection{Použité prostředí}
 K vytvoření tohoto dokumentu byl použit úžasný typografický nástroj \LaTeXe. Jako testovací operační systém jsem použil Debian 7.7.0 virtualizovaný v programu VMware Workstation nad operačním systémem Windows 8.1.
 
-\section{Použité konvence}
+\subsection{Použité konvence}
 Všechny texty, příkazy, parametry, skripty\dots Zkrátka vše, co se zadává do terminálu a zároveň všechny odpovědi terminálu, budou vysázeny následujícím způsobem. 
 \begin{verbatim}
 ping google.com
@@ -39,17 +41,20 @@ Přestože každý nový řádek v shellu vypadá nějak takto\dots
 justify@debian:~$ 
 \end{verbatim}
 \dots budu v dalších ukázkách tuto část, ač je velice důležitá, pro zjednodušení vynechávat. To, že jsou všechny příkazy zakončený stiskem klávesy enter, asi není nutné zdůrazňovat. Parametry představené u některých funkcí rozhodně nejsou všechny parametry, které tyto funkce umí zpracovat. Dokonce i funkce, které jsou představeny jako funkce bez parametrů, jich umí většinou řadu zpracovat. Úroveň hloubky zkoumání tedy odpovídá aktuálním výukovým potřebám. Další informace je možné získat z manuálových stránek.
+\subsection{Errata}
+Pokud v dokumentu narazíte na chybu, prosím kontaktujte jednoho z autorů. Vaše námitky prověříme a chyby opravíme.
+
 \newpage
 
 \section{Základy systému UNIX a GNU/Linux}
 \subsection{Úvod}
 Jedním z nejvýznamnějších zástupců unixových operačních systémů je systém GNU/Linux. Tento systém je velice populární a hlavně rozšířený. Můžeme ho
-najít například v clusterech, serverech, PC, tabletech, v mobilech a v dalších zařízeních. I před velkou popularitu ale zůstává systém nepochopen a to
+najít například v clusterech, serverech, PC, tabletech, v mobilech a v dalších zařízeních. I přes velkou popularitu ale zůstává systém nepochopen a to
 především z hlediska základních principů, filosofie a uživatelských návyků. Většina \uv{řadových} uživatelů se tak při svém používání setká pouze se zlomkem možností, které se ukrývají pod grafickým uživatelským rozhraním. 
 
-Unix je prvním operačním systémem, který byl napsán ve vyšším programovacím jazyce -- v jazyce C (1973). Do té doby se programy napsané ve vyšších programovacích jazycích považovaly za příliš pomalé na to, aby mohly sloužit jako operační systém. Výměna assembleru za jazyk C dovolila programovat větší a propracovanější projekty, které se lépe udržovaly a opravovaly. Přestože je koncepce systému Unix stará přes 40 let, stále je funkční a inspirující. Při práci se systémem si všimnete jedné zajímavosti.
+Unix je prvním operačním systémem, který byl napsán ve vyšším programovacím jazyce -- v jazyce C (1973). Do té doby se programy napsané ve vyšších programovacích jazycích považovaly za příliš pomalé na to, aby mohly sloužit jako operační systém. Výměna assembleru za jazyk C dovolila programovat větší a propracovanější projekty, které se lépe udržovaly a opravovaly. Přestože je koncepce systému Unix stará přes 40 let, stále je funkční a inspirující. 
 
-Unixové systém jsou \uv{tiché}. To znamená, že při úspěšném vykonání nějaké operace ve většině případů uživateli nesdělí, že operace proběhla v pořádku. V případě, kdy došlo k chybě tuto chybu pochopitelně zobrazí. Toto chování vychází z historických potřeba a možností tehdejších zobrazovacích zařízení a uživatelů. Když se ještě výstup z počítače tisk na tiskárnu, bylo pochopitelně žádoucí, aby množství vytištěného textu bylo co nejmenší.
+Při práci se systémem si všimnete jedné zajímavosti. Unixové systém jsou \uv{tiché}. To znamená, že při úspěšném vykonání nějaké operace ve většině případů uživateli nesdělí, že operace proběhla v pořádku. V případě, kdy došlo k chybě tuto chybu pochopitelně zobrazí. Toto chování vychází z historických potřeba a možností tehdejších zobrazovacích zařízení a uživatelů. Když se ještě výstup z počítače tisk na tiskárnu, bylo pochopitelně žádoucí, aby množství vytištěného textu bylo co nejmenší.
 
 \begin{figure}
 \begin{center}
@@ -324,6 +329,16 @@ drw-r-xr-x  2 justify justify 4096 Feb 23 16:02 pokusy
 \end{verbatim}
 V prvních dvou příkladech je aktuální adresář právě adresář Dokumenty, v posledním případě na aktuálním adresáři nezáleží.
 
+\subsubsection{ln}
+Vytvoří odkaz na soubor (\uv{zástupce}). Pokud dojde ke smazání souboru, na který se odkazuje, odkaz zůstane zachová, ale bude rozbitý. Pokud pak soubor se stejným názvem znovu vytvoříme, odkaz bude opět funkční -- pracuje tedy jen se jménem souboru. K odkazu mají všichni nastavena všechna přístupová práva.
+
+\begin{verbatim}
+ln -s copy.txt odkaz.txt 
+
+-rw-r--r-- 1 justify justify 0 Feb 23 16:02 copy.txt
+lrwxrwxrwx 1 justify justify 8 Feb 23 15:59 odkaz.txt -> copy.txt
+\end{verbatim}
+
 \subsubsection{mkdir}
 Vytváří nový adresář. Jméno adresáře, popřípadě cesta, kde se má vytvořit, se předává jako parametr. Pokud není cesta specifikována, vytvoří se v aktuálním adresáři.
 \begin{verbatim}
@@ -385,14 +400,26 @@ more je filtrovací program na interaktivní procházení souborů po stránkác
 \subsubsection{head a tail}
 Zobrazí začátek souboru respektive jeho konec. Jako argument předáme vypisovaný soubor a taky číselný parametr, který určuje kolik řádku od začátku, respektive od konce, se má zobrazit (pokud není uvedeno, zobrazí 10 řádků).
 \begin{verbatim}
-head -1 helloword.cpp
+head -n 1 helloword.cpp
 #include <iostream>
 \end{verbatim}
-
+Pokud je předané číslo záporné, znamená to, kolik řádků od konce se má vynechat. 
 \begin{verbatim}
-tail -1 helloword.cpp
+head -n -7 helloword.cpp
+#include <iostream>
+\end{verbatim}
+Soubor má celkem 8 řádků, pokud jich 7 od konce odebereme, vytiskne se jen první řádek. 
+\begin{verbatim}
+tail -n 1 helloword.cpp
 }
 \end{verbatim}
+Podobně jako u head můžeme i u tail specifikovat spíš než kolik řádků se má vytisknout, kolik se jich má od začátku vynechat. Tentokrát se před číslem musí objevit +.
+
+\begin{verbatim}
+tail -n +8 helloword.cpp
+}
+\end{verbatim}
+Můžete si všimnou, že ač má soubor právě 8 řádků, předchozí příkaz ještě vypíše poslední řádek. Je to proto, že tail začíná pracovat na k-tém řádku -- v našem případě na osmém řádku.
 
 \subsubsection{wc}
 Zobrazí informace o souboru -- počet řádků, slov a bajtů v tomto pořadí.
@@ -438,10 +465,10 @@ Uživateli (u -- user) odeber (-) práva na zápis (w -- write) u souboru text.t
 \begin{verbatim}
 chmod u+rw text.txt
 \end{verbatim}
-Uživalite (u -- user) přidej (+) práva na čtení (r -- read) a zápis (w -- write) u souboru text.txt.
+Uživateli (u -- user) přidej (+) práva na čtení (r -- read) a zápis (w -- write) u souboru text.txt.
 
 \subsubsection{Zadání práv osmičkově}
-Abychom mohli přístupová práva zadávat pomocí osmičkového zápisu, musíme si nejprve stanovit, jaké \uv{hodnoty} budou reprezentovat jaká práva. Pro čtení máme hodnotu 4 (4=r), pro zápis 2 (w=2) a pro spouštění hodnotu 1 (x=1). Práva nastavujeme pro všechny 3 skupiny současně a tak například hodnota 660 představuje práva na čtení a zápis pro uživatele a skupinu a žádná právě pro ostatní.
+Abychom mohli přístupová práva zadávat pomocí osmičkového zápisu, musíme si nejprve stanovit, jaké \uv{hodnoty} budou reprezentovat jaká práva. Pro čtení máme hodnotu 4 (4=r), pro zápis 2 (w=2) a pro spouštění hodnotu 1 (x=1). Práva nastavujeme pro všechny 3 skupiny současně a tak například hodnota 660 představuje práva na čtení a zápis pro uživatele a skupinu a žádná práva pro ostatní.
 
 \begin{verbatim}
 chmod 755 text.txt
@@ -479,8 +506,40 @@ Adresářová struktura v systémech unixového typu je jedna velká stromová s
 /etc/fstab/& (FileSystem TABle) popisuje jednotlivé systémové svazky\\
 \end{tabular} 
 
+\subsection{Expanze jmen}
+Expanze je soubor operací, které se s námi zadaným příkazem vykonají, než se spustí samotné jeho vykonávání. Může jít o rozepsání adres, substituci některých částí nebo rozšíření znaků, které pracují jako \uv{syntaktický cukr}.
+\subsubsection{$\sim$ tilda expanze}
+Pokud uvedeme $\sim$ jako součást cesty, respektive její prefix, dojde k nahrazení za cestu od domovského adresáře aktuálně přihlášeného uživatele.
+
+\begin{verbatim}
+~/bin
+\end{verbatim}
+se rozšíří na
+\begin{verbatim}
+/home/justify/bin
+\end{verbatim} 
+
+\subsubsection{Doplnění cest * a ?}
+Jedná se o klasické doplňování jmen souborů, kde otazník (?) nahrazuje právě jeden znak a hvězdička (*) libovolný počet znaků (včetně žádného znaku). Samotná * tedy znamená všechny soubory v daném adresáři, *.* pak všechny soubory, které mají ve jméně alespoň jednu tečku.
+
+\subsubsection{Výběr z množiny []}
+Pomocí hranatých závorek [ ] můžeme zadat více variant pro určitou pozici znaku. 
+\begin{verbatim}
+/home/m[ai]rek
+\end{verbatim} 
+tedy znamená současně 
+\begin{verbatim}
+/home/mirek
+\end{verbatim} 
+a 
+\begin{verbatim}
+/home/marek
+\end{verbatim} 
+
 \section{Systém procesů}
 Program je spustitelný soubor. Proces je aktivní reprezentace programu. Vzniká spuštěním programu. Každý proces při svém vzniku získá PID -- unikátní číselný identifikátor procesu. Plánovač procesů procesům cyklicky přiděluje výpočetní čas procesoru a umožňuje tak multitasking. Stejně jako adresářová struktura je i systém procesů stromová hierarchie. Kořenový proces se jmenuje init a má PID 1. Je to proces, který běží vždy, když běžím systém. Každý proces musí mít nastaveného předka (rodiče).
+
+Jako shell se označuje příkazový interpret, který vykonává příkazy v textovém režimu. Stará se o jejich spouštění a správu -- vykonávaným příkazům se pak říká úlohy.
 
 \subsection{Výpis procesů}
 \subsubsection{ps aux}
@@ -507,12 +566,47 @@ Při ukončení proces vrací svému rodiči číselnou hodnotu. Konvence a zvyk
 \subsection{Plánované spouštění programů}
 \subsubsection{at}
 Slouží k jednorázovému plánovanému spuštění procesu. Jako parametr se předá jméno souboru, který se ve stanovenou dobu spustí. 
+
 \subsubsection{cron}
 Podobně jako at umožňuje spustit plánovaný proces ale s tím rozdílem, že umožňuje periodické spouštění. 
 
 \subsection{Priority procesů}
+Procesům se nastavuje priorita v intervalu od $-20$ (nejvíce agresivní) do 19 (nejméně agresivní).
+\subsubsection{nice}
+Příkaz nice slouží ke změně priority neběžících procesů -- spustí proces s předanou prioritou
+\begin{verbatim}
+nice --5 bluefish
+\end{verbatim}
+Spustí editor Bluefish s prioritou $-5$. Základní priorita je nastavena na 10.
 
+\subsubsection{renice}
+Slouží ke směně priority již běžících procesů.
 
+\subsection{Řízení úloh v shellu}
+Úlohy můžou běžet na pozadí nebo na popředí. Pokud běží úloha na popředí, blokuje shell, do kterého pak není možné zadávat další příkazy -- programu je umožněn výstup na terminál. Pokud běží na pozadí (toho docílíme tak, že při spouštění uvedeme na konec \&), je možné zadávat další příkazy a spouštět další programy. Program běžící na pozadí by ale neměl vypisovat výstup na terminál.
 
+K výpisu aktuálně běžících úloh slouží příkaz jobs. Pro převedení úlohy z pozadí na popředí můžeme použít příkaz \textbf{fg}. Při opačném převodu -- z popředí na pozadí -- musíme použít vícekrokový přístup. Úlohu nejprve pomocí CTRL + Z pozastavíme. Teprve poté můžeme pomocí příkazu \textbf{bg} úlohu převést na pozadí. Pro doplnění a zopakování uvedeme klávesovou zkratku CTRL + C, která provede násilné ukončení úlohy běžící na popředí.	
 
+Jako zombie se označuje proces, u kterého si rodič ještě nevyzvedl návratovou hodnotu.
+
+\section{Vstup a výstup programu}
+Každý program má vstup, výstup a chybový výstup pro výstup chyb. Program tak můžeme chápat jako filtr, který převede vstup na výstup. Vstup souboru můžeme přesměrovat tak, aby jím byl soubor.
+\begin{verbatim}
+program < soubor
+\end{verbatim}
+
+Naopak můžeme i výstup programu přesměrovat do souboru. Protože se výstup dělí na výstup a chybový výstup, můžeme zvolit, který z nich chceme přesměrovat. Pro výstup programu použijeme \textgreater, pro chybový výstup 2\textgreater{} a pro veškerý výstup použijeme \&\textgreater
+\begin{verbatim}
+program > soubor
+program 2> soubor
+program &> soubor
+\end{verbatim}
+
+Výstup jednoho programu můžeme také přesměrovat na vstup jiného programu pomocí roury~\textpipe. 
+\begin{verbatim}
+program1 | program2
+\end{verbatim} 
+Výstup programu program1 se stane vstupem programu program2.
+
+Pojmenovaná roura (princip fifo) je speciální soubor, který reprezentuje rouru. Pomocí ní je možné přesměrovat výstup z nějaké programu do tohoto speciálního souboru -- do roury -- a pak jiným programem tuto rouru číst, takže vstup programu se přesměrovává z roury.
 \end{document}
