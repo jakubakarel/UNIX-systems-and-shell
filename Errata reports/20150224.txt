@@ -1,4 +1,5 @@
 
+FINISHED
 (OK) CTRL+ALT+T spustí terminálové okno
 (OK) CTRL+SHIFT+Q uzavření terminálového okna
 (FIXED)	meta ... Zkratka jaké klávesy ? :D
