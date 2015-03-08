@@ -42,7 +42,7 @@ justify@debian:~$
 \end{verbatim}
 \dots budu v dalších ukázkách tuto část, ač je velice důležitá, pro zjednodušení vynechávat. To, že jsou všechny příkazy zakončený stiskem klávesy enter, asi není nutné zdůrazňovat. Parametry představené u některých funkcí rozhodně nejsou všechny parametry, které tyto funkce umí zpracovat. Dokonce i funkce, které jsou představeny jako funkce bez parametrů, jich umí většinou řadu zpracovat. Úroveň hloubky zkoumání tedy odpovídá aktuálním výukovým potřebám. Další informace je možné získat z manuálových stránek.
 \subsection{Errata}
-Pokud v dokumentu narazíte na chybu, prosím kontaktujte jednoho z autorů. Vaše námitky prověříme a chyby opravíme.
+Pokud v dokumentu narazíte na chybu, prosím kontaktujte jednoho z autorů. Vaše námitky prověříme a chyby opravíme. Protože dokument vzniká iterativním způsobem, je možné, že dojde k duplicitnímu výskytu některých informací.
 
 \newpage
 
@@ -90,7 +90,11 @@ C + SHIFT + Q & Uzavře terminálové okno.\\
 \subsection{Základní příkazy v shellu}
 Zadávání příkazů je \uv{case sensitive} -- to znamená, že striktně záleží na velikosti zadávaných znaků. Příkaz \uv{ping} bude fungovat, zatímco příkaz \uv{Ping} už ne. Většině příkazů lze při volán předat řadu vstupních argumentů. Ty začínají buďto jednou pomlčkou, která je následována obecně několika málo znaky nebo dvěma pomlčkami, kde jsou to celá nezkrácená slova. 
 
-V případě nouze se jako velice zručná klávesa ukazuje tabulátor, protože dokáže doplnit rozepsané jméno programu, souboru nebo adresáře. Při první stisku doplní jméno v případě, že je na výběr pouze jedna možnost. Pokud nedoplní, pak je možností víc. Další stisk klávesy tab pak vypíše všechny možnosti, kterými můžeme pokračovat.
+V případě nouze se jako velice zručná klávesa ukazuje tabulátor, protože dokáže doplnit rozepsané jméno programu, souboru nebo adresáře. Při první stisku doplní jméno v případě, že je na výběr pouze jedna možnost. Pokud nedoplní, pak je možností víc. Další stisk klávesy tab pak vypíše všechny možnosti, kterými můžeme pokračovat. 
+
+\begin{center}
+Doplňování cesty klávesou tab je velmi mocné. \cite{vychodilPrirucka}
+\end{center}
 
 Z počátku je nutné seznámit se s poměrně velkým množstvím příkazů a programů, ale v začátcích je nutné se naučit alespoň tyto základní, jinak bude naše práce zdlouhavá a otravná, protože se budeme muset neustále dívat do materiálů, prohledávat manuálové stránky nebo hledat na internetu.
 
@@ -279,7 +283,9 @@ cd - & předchozí adresář\\
 \end{table}
 
 \subsubsection{ls}
-Příkaz ls bez parametrů vypíše pouze obsah aktuálního adresáře. Přidáním parametrů můžeme docílit vypsání dalších informací o souborech, třeba informace o nastavených přístupových právech, vlastníkovi a času vytvoření.
+Příkaz ls bez parametrů vypíše pouze obsah aktuálního adresáře. Přidáním parametrů můžeme docílit vypsání dalších informací o souborech, třeba informace o nastavených přístupových právech, vlastníkovi a časové známce -- čas poslední modifikace. Program ls standardně nevypisuje neviditelné soubory (což jsou soubory začínající tečkou), o jejich vypsání musíme požádat přidáním parametru -a. 
+
+Přepínačem -F dosáhneme dalšího zpřesnění výpisu -- za jméno se doplní jeden další znak, například lomítko / pro adresář nebo hvězdičku * pro spustitelný soubor. Jak už se pomalu stává zvykem, přepínačem -R dosáhneme rekurzivního výpisu obsahu adresářů.
 
 \begin{verbatim}
 ls -l
@@ -340,7 +346,7 @@ lrwxrwxrwx 1 justify justify 8 Feb 23 15:59 odkaz.txt -> copy.txt
 \end{verbatim}
 
 \subsubsection{mkdir}
-Vytváří nový adresář. Jméno adresáře, popřípadě cesta, kde se má vytvořit, se předává jako parametr. Pokud není cesta specifikována, vytvoří se v aktuálním adresáři.
+Vytváří nový adresář. Jméno adresáře, popřípadě cesta, kde se má vytvořit, se předává jako parametr. Pokud není cesta specifikována, vytvoří se v aktuálním adresáři. Když se budeme snažit vytvořit adresář v cestě, která neexistuje, dojde k chybě. Pokud budeme chtít takovému chování zamezit, je třeba použít přepínač -p, který pak vytvoří všechny adresáře, které v zadané cestě neexistují.
 \begin{verbatim}
 mkdir test-dir
 ls -la
@@ -476,9 +482,14 @@ chmod 755 text.txt
 Uživateli nastav plná práva (čtení, zápis, spuštění), skupině a ostatním práva pro čtení a spuštění.
 
 \section{Adresářová struktura systému Unix}
-Adresářová struktura v systémech unixového typu je jedna velká stromová struktura začínající v kořenovém adresáři. Soubory, které začínají tečkou jsou skryté a nejsou viditelné, pokud o ně nepožádáme. Tato struktura obsahuje některé velice důležité adresáře s pevně přiděleným účelem, u kterých je dobré vědět, co obsahují.
+Adresářová struktura v systémech unixového typu je jedna velká stromová struktura začínající v kořenovém adresáři. Soubory, které začínají tečkou jsou skryté a nejsou viditelné, pokud o ně nepožádáme. Tato struktura obsahuje některé velice důležité adresáře s pevně přiděleným účelem, u kterých je dobré vědět, co obsahují. 
+
+Z faktu, že je adresářová struktura reprezentovaná stromovou strukturou, plyne skutečnost, že každý uzel (kromě kořene) musí mít svého předka. Každý nelistový uzel je adresář a každý list je soubor. Ani prázdný adresář nebude list, protože i ten obsahuje dva záhadné adresáře (můžete ověřit pomocí prvního písmene výpisu ls -la), které jsou pojmenované \uv{.} a \uv{..} (tečka a dvě tečky). Ty vznikají spolu s adresářem během jeho vytváření. Díky tomu nedojde k tomu, že by byl nově vytvořený adresář prázdný. Adresář \uv{.} slouží jako odkaz na aktuální adresář a \uv{..} slouží jako odkaz na rodičovský adresář (předem ve stromové hierarchii).
 
 \subsection{Důležité adresáře}
+V tabulce \ref{dirTable} najdete seznam důležitých adresářů, které se v linuxových operačních systémech vyskytují spolu s popisem, co v nich je, k čemu slouží a co by se do nich mělo ukládat.
+\begin{table}
+\begin{center}
 \begin{tabular}{l p{11cm}}
 /bin/ & základní spustitelné systémové programy pro použití všemi uživateli\\
 /boot/ & jádro systému (kernel), soubory zavaděče\\
@@ -505,6 +516,10 @@ Adresářová struktura v systémech unixového typu je jedna velká stromová s
 /etd/shadow & soubor uživatelských hesel a jejich vlastností (šifrované)\\
 /etc/fstab/& (FileSystem TABle) popisuje jednotlivé systémové svazky\\
 \end{tabular} 
+\end{center}
+\label{dirTable}
+\caption{Popis důležitých adresářů v systému}
+\end{table}
 
 \subsection{Expanze jmen}
 Expanze je soubor operací, které se s námi zadaným příkazem vykonají, než se spustí samotné jeho vykonávání. Může jít o rozepsání adres, substituci některých částí nebo rozšíření znaků, které pracují jako \uv{syntaktický cukr}.
@@ -609,4 +624,11 @@ program1 | program2
 Výstup programu program1 se stane vstupem programu program2.
 
 Pojmenovaná roura (princip fifo) je speciální soubor, který reprezentuje rouru. Pomocí ní je možné přesměrovat výstup z nějaké programu do tohoto speciálního souboru -- do roury -- a pak jiným programem tuto rouru číst, takže vstup programu se přesměrovává z roury.
+
+\newpage
+\begin{thebibliography}{0}
+  \bibitem[Vych03]{vychodilPrirucka} Vilém Vychodil:
+    \emph{Linux: Příručka českého uživatele}. Computer Press 2003, Brno ISBN 80-7226-333-1. 
+\end{thebibliography}
 \end{document}
+

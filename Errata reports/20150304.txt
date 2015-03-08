@@ -1,20 +1,22 @@
+FINISHED
+
 2.4.19 PØIDAL BYCH
-	- Program ls standartnì nevypisuje neviditelné soubory (což jsou soubory zaèínající teèkou), vypsání neviditelných zajistíme pøidáním 	parametru a. pø. ls -a 
-	- pøepínaèem -F provede detailnìjší výpis - za každý adresáø pøidá "/"
-	- pøepínaè -R zpùsobí rekurzivní výpis souborù ve všech podadresáøích
+OK	- Program ls standartnì nevypisuje neviditelné soubory (což jsou soubory zaèínající teèkou), vypsání neviditelných zajistíme pøidáním 	parametru a. pø. ls -a
+OK	- pøepínaèem -F provede detailnìjší výpis - za každý adresáø pøidá "/"
+OK	- pøepínaè -R zpùsobí rekurzivní výpis souborù ve všech podadresáøích
 
-2.4.19 OPRAVIT 
-	- èas a datum ve výpisu není vytvoøení souboru, protože ls -l vypíši informace v poøadí práva k souboru, poèet odkazù, vlastník, 		vlastnická  skupina, !!!èas modifikace!!! a název souboru
+2.4.19 OPRAVIT
+FIXED	- èas a datum ve výpisu není vytvoøení souboru, protože ls -l vypíši informace v poøadí práva k souboru, poèet odkazù, vlastník, 		vlastnická  skupina, !!!èas modifikace!!! a název souboru
 
-2.4.21 PØIDAL BYCH 
-	- Pokud bychom se snažili vytvoøit adresáø v cestì která neexistuje dojde implicitnì k chybì, alternativnì lze použít program mkdir s 	pøepínaèem -p, který vytvoøí všechny adresáøe, které v pøedávané cestì neexistují.
+2.4.21 PØIDAL BYCH
+OK	- Pokud bychom se snažili vytvoøit adresáø v cestì která neexistuje dojde implicitnì k chybì, alternativnì lze použít program mkdir s 	pøepínaèem -p, který vytvoøí všechny adresáøe, které v pøedávané cestì neexistují.
 
 4. MOŽNÁ BYCH DOPLNIL
-	- díky stromové hiearchii lze ke každému prvku vyjma koøene pøiøadit jeho pøedchùdce, kde nelistový uzel je adresáø a list je soubor.
-	- Urèitì jste si všimli, že pøi použítí ls s parametrem a se vám pokaždé vypíši 2 záhádné soubory navíc a to "." a "..". 			Dùvodu je  prostý, adresáøe jsou nelistové a z toho plyne, že novì vytvoøený adresáø nesmí být prázdný jinak bychom došli ke sporu. 		Soubory ".", ".." se  nazývají speciální adresáøe, kde "." slouží jako odkaz na akturální adresáø a ".." na rodièovský adresáø. 		Mùžete si vyzkoušet, že pomocí  pøíkazu "cd .." se dostanete do nadøazeného adresaøé, jinými slovy rodièovské adresáøe.
+OK	- díky stromové hiearchii lze ke každému prvku vyjma koøene pøiøadit jeho pøedchùdce, kde nelistový uzel je adresáø a list je soubor.
+OK	- Urèitì jste si všimli, že pøi použítí ls s parametrem a se vám pokaždé vypíši 2 záhádné soubory navíc a to "." a "..". 			Dùvodu je  prostý, adresáøe jsou nelistové a z toho plyne, že novì vytvoøený adresáø nesmí být prázdný jinak bychom došli ke sporu. 		Soubory ".", ".." se  nazývají speciální adresáøe, kde "." slouží jako odkaz na akturální adresáø a ".." na rodièovský adresáø. 		Mùžete si vyzkoušet, že pomocí  pøíkazu "cd .." se dostanete do nadøazeného adresaøé, jinými slovy rodièovské adresáøe.
 
 5.1.3 PØIDAL BYCH K PSTREE
-- pøíkaz tree vypíše hiearchii za pomocí ASCI Tree aktuálního adresáøe, za pomocí pøepínaèe -d jej donutíme vypisovat pouze adresáøe
+OPTIONAL, DENIED - pøíkaz tree vypíše hiearchii za pomocí ASCI Tree aktuálního adresáøe, za pomocí pøepínaèe -d jej donutíme vypisovat pouze adresáøe
 
 MUSÍŠ DODAT !!:D :D
-Doplnování pomocí tab bych nahradil citací Mr.Vychodila - "Doplòování cesty klávousou tap, je velmi mocné."
+OK Doplnování pomocí tab bych nahradil citací Mr.Vychodila - "Doplòování cesty klávousou tap, je velmi mocné."
