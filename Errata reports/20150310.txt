@@ -1,0 +1,38 @@
+3. DOPLNIL BYCH 
+- každý uživatel v linuxu je jednoznaènì indentifikován svým UID - User Identification, root má tohle èíslo rovné 0. Uživatelská jména
+se zavádí pouze pro lepší orientaci v systému. V systému se mohou najít soubory v jehož vlastník nemá pøidìlené
+jméno. Tahle situace typický nastává ve chvíli, kdy je z databáze úètù odstranìn záznam o uživateli, ale nejsou napøíklad
+smazána data z jeho domovského adresáøe. Skupiny jsou podobnì jako uživatelé identifikováni èíslem GID - Group Identification
+-informace o uživatelský úètech a skupinách jsou uloženy v /etc/passwd a /etc/group, tyhle soubory mají podobnou strukturu. V /etc/passwd
+je øádek ve formátu
+	<název úètu> : <heslo> : <UID> : <GID> : <jméno> : <adresáø> : <shell> 
+V linuxu se záznamy oddìlené dvojteèkou vyskytují pomìrnì èasto, pøevážnì v konfiguraèních a systémových souborech. První položku asi 
+nemusím rozebírat, protože je jasná, druhou položkou je heslo, které je samozøejmì zakódované. Pokud místo heslo uvedeme jeden znak napøíklad "*", tak uživateli znemožníme se pøihlásit na základì heslo. Za heslem následují 2 indentifikaèní hodnoty uživatelského úètu, indetifikace uživatele v rámci systému a indetifikace jeho primární skupiny do které je uživatel zaøazen. Dalším údajem je domovský adresáø, napøíklad 
+/home/student/inf97/novakj a posledním je implicitní shell napøíklad /bin/bash
+
+3. PØIDAL BYCH
+program chgrp <skupina> <soubor>, slouží ke zmìne skupiny. U souboru lze ale pouze nastavit skupiny, do kterých patøí vlastník.
+pøíklad
+group novakj
+students wheel
+ls -l todo
+-rwxr-xr-x 1 novakj student 69 Jun 18 16:45 todo*
+chgrp wheel todo
+ls-l todo
+-rwxr-xr-x 1 novakj wheel 69 Jun 18 16:45 todo*
+
+
+3. TEÏ UŽ BYCH TAM OPERACI = VÁŽNÌ PØIDAL
+operace = (nastav) u sybolického zadávání práv 
+
+pøíklady: pøíkaz			význam
+chmod a=rw, o= todo 			všem nastaví práva na read a write a nakonec skupinì other vymaže práva k souboru todo 
+chmod a=r .forward			všem nastaví práva na soubor .forward
+chmod a - rwx, u=rwx mail 		všem odebere práva rwx a kategorii user nastaví práva na read, write a execute
+
+4.3 UPRAVIL BYCH
+
+/opt/ - v adresáøi bývá obvykle instalován komerèní SW nebo nestandartní balíèky
+/sbin - adresáø obsahuje programy potøebné pro zavedení a administraci systému. Tyto programy jsou používány vesmìs super uživatelem root.
+/var - adresáø s data, která se dynamicky mìní, napøíklad soubory s uživatelskou poštou, www stránky, archivy Network News, fronta pro tiskárnu a podobnì. 
+/etc/fstab - soubor se záznamem o souborových systémech pøipojitelných bìhem života systému. Obsah souboru hraje klíèovou roli pøi startu systému, konkrétnì pøi pøipojování souborových systémù
