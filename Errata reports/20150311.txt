@@ -1,0 +1,141 @@
+5. UPRAVIL BYCH 
+VÌTU: Program je spustitelny soubor. Proces je aktivn reprezentace programu. Vznika spustenm pro-gramu.
+
+Program je spustitelný soubour, uložený na disku. Je-li program spuštìn, jádro zavede jeho obraz do pamìti a zaènì vykonávat v nìm
+obsažené instrukce. Proces je z tohoto podledu vykonávaná instrukce programu.
+
+5. PRIDAL BYCH
+
+Bìhem práce s procesy se lze setkat se tøemi druhy procesù
+- Uživatelské procesy - userspace processes, jsou spouštìny jednotlivými uživateli, zpravidla pomocí interpretu pøíkazù.
+- Systémové procesy - daemons, jsou spouštìny bìhem startu systému, zpravidla v nekoneèné smyèce a zajištují rùzné služby. 
+Typickým pøíkladem je periodická obsluha klientù.
+- Vlákna jádra - kerner threads jsou v podstatì speciální èásti jádra bìžící jako procesy. Napøíklad vlákno kmod se stará o zavádìní
+vyžadovaných modulù jádra do pamìti.
+
+5.1 OPRAVIL BYCH
+
+ps -aux -zobraz všechny procesy vlatnìné uživatelem "x", znak x v tomhle smyslu chápán jako "jakýkoliv uživatel"
+
+5.1.2 PRIDAL BYCH
+
+program top se ukonèuje klávesou q, a klávesa h zobrazí nápovìdu programu top
+
+5.2.1 OPRAVIL&DOPLNIL BYCH
+
+"Prkaz kill nasilne ukonc proces." 
+lepší je program kill definovat jako: 
+-Program kill slouží k zaslání signálu procesu, lze použít ve tvaru kill -<signál> <procesy> za signál mùžeme dosadit buï to èíslo a nebo jmenou kosntantu signálu pro okamžité ukonèení je to èíslo 9 nebo SIGKILL, za parametr procesy mùžeme dosadit buï to PIT procesu a nebo indetifikátor procesu v rámci aktuálního shellu, ve tvaru %<id>. Jako další signály mùžeme uvést SIGSTOP a SIGCOUNT, díky nimž mùžeme pozastavit proces a po té ho pøesunout na pozadí, což je ekvivaletní
+použítí klávesové zkratky C-c a pøíkazu bg.
+
+
+K VETE: "nekterym se ale nelze branit" bych uvedl do závorky SIGKILL, SIGSTOP
+
+5.3 PØIDAL BYCH TROCHU TEORIE
+	
+V systému Unix je možné plánovat spouštìní procesù. Jinak øeèeno, uživatel mùže definovat èas a proces, který má být spuštìn. 
+O spouštìní procesù se nestará jádro operaèního systému, ale je plnì v režii systémových deamonù. Spouštìní procesù mùže být 
+jednorázové nebo periodické.
+
+5.3.1 OPRAVIL BYCH - nevím teda jak tobì, ale mì v našich scriptech zmínìný zpùsob nejde.. :/
+
+*Jednorázové spouštìní procesù
+
+-Slouží k jednorázovému plánovému spuštìní procesu, o to se stará daemon atd. Program lze použít ve tvaru at <èas> <datum> +<pøírustek>,
+každý z parametrù je volitelný, ale vždy musí být minimálnì 1 ! Není-li èas uveden bude úloha spuštìna o pùlnoci, nebo není-li uvedeno datum pak program kalkuluje s aktuálním datem, pøírustek je psán ve tvaru èísla a èasové jednotky (hours, days atd..), 
+nestandartní reprezentace èasu a data naleznete v manuálové stránce programu. Po spuštìní programu s korektním èasovým intervalem je uživatel vyzván k zadání pøíkazù. Po zadání posledního pøíkazu musí uživatel ukonèit vstup klávesou C-d.
+
+pøíklad: 
+$at 11:30 26.4.2015
+warning: commands will be executed using /bin/sh
+at> ls -la ~
+at> C-d
+job 3957 at Wed Mar 11 20:58:00 2015
+
+-Èíslo za job nelze chápat jako PID, proces v dobì naplánování nebìží je pouze vytvoøen záznam o jeho spuštìní.
+
+
+-Seznam naplánovaných procesù lze vypsat za pomocí pøíkazu atq
+$atq 
+3957    Wed Mar 11 20:58:00 2015 a betajo00
+
+Naplánováné procesy lze zrušit programem atrm <id>, kde id je èíslo naplánované úlohy.
+$atrm 3957 
+
+
+*Periodické spouštìní procesù
+-K opakovanému spouštìní se dá použít i výše zmínìný at, tím že poslení pøíkaz bude opìtovné spuštìní sebe sama. 
+V takové pøípadì je ale nutné používat èasový posun, proè si ale dìlat vìci složité, když k periodickému plánování spouštìní procesù je tu program crontab, o jehož spouštìní se stará daemon cron. Tento deamon i jiné  èinnosti v systému, které je nutné periodicky vykonávat napøíklad program calendar. 
+
+-Program crontab bývá používán 2 zpùsoby:
+
+crontab -u <uživatel> <soubor>
+crontab -l <uživatel>
+
+První pøíkaz nastaví tabulku spouštìných procesù pro uživatele <uživatel>, pøitom vzorem tabulky je soubor <soubor>.
+Druhým pøíkazem je možné zobrazit nastavenou tabulku.
+
+-Každý øádek v tabulce reprezentuje jednu periodickou spouštìnou úlohu. Zaèíná-li øádek znakem hash "#" nebo podle 
+Mr. Vychodila - kanálem. pak se jedná o komentáø a celý øádek je ignorován, rovnìž prázdné øádky. Ostatní øádky musí mít tvar:
+<minuta> <den> <mìsíc> <den v týdnu> <pøíkaz>
+Èasové údaje mohou být èíselné nebo místo nich mùže být uveden znak "*", která znamená "kdykoliv". Pozor èíselný údaj mùže být uveden pouze jeden nebo musí být oddìlen èárkami, je to kvùli tomu kdybychom chtìli jeden script spouštìt napøíklad ve ètvertek i ve støedu.
+
+pøíklady: (je použit pøíkaz cat, aby byla oèividná struktura uložení procesù)
+$cat ~/cron-my.tab
+#moje akce
+5 0 * * *				~/prvni-script
+0, 10, 20, 30, 45, 50 14 1 * * 		~/druhy-script
+15 4 * * sun				~/treti-script
+
+Pozor! Pokud nastavíme hvìzdièky u všech èasových parametrù, bude se script pouštìt, co minutu až do konce vìkù druidù.
+
+
+5.4 OPRAVIL&DODAL BYCH
+
+Mimochodem nice --5 bluefish, opravdu se to takhle píše ? o.O Podle mì by to mìlo být nice -n 5 bluefish, ani v manuálové
+stránce jsem nenašel podobný tvar.
+
+- priorita procesù urèujì jak èasto jim bude pøidìlován procesorový èas. Priorita je v Unixu èíslo, èím vyšší tím má proces menší prioritu.
+POZNÁMKA: root mùže mìnit priority procesù libovolnì, bìžný uživatel mùže pouze vlastním.
+
+K INTERVALU... zápornou hodnotu mùže používat jenom root v takové chvíli by vyskoèila chyba: cannot set priority: Permission denied
+
+-pøíklad pro program renice
+$nice -n 10 ~/data/archivuj &
+[1] 24532
+$renice 20 -p 24532
+24532: old priority 10, new  priority 20
+
+
+
+5.5 NEJAK BYCH ZAKOMPONENTOVAL (nasazené poznámky jsou podle mì moc struèé)
+
+*Bìh procesù na pozadí
+Unix je jak víme víceúlohový, proto nìkteré procesy bìží na pozadí. Což znamená, že proces bežící na pozadí
+nebude omezovat uživatelovu práci v shell. Uveïme si pøíklad, pøedstav te si že spustíte program gzip(program slouží pro
+kompresy a dekompresy dat) a kdyby jste mìli dostávat prùbìh komprese na výstup v shellu, bylo by to znaènì rušivé. Proto pro
+jednoduchost mùžeme øíct, že procesy bìžící na pozadí, se chovají tiše. Z toho plyne, že procesy bìžící na pozadí jsou samostatné
+a v žádném pøípadì by nemìli být interaktivní, protože kdyby mìli èekat na uživatelský vstup, pøesli by ze stavu bìžící do stavu pozastavený.
+Proces lze spustit na pozadí, uvedením metaznaku "&" na konci pøíkazu spuštìní.
+
+$~/data/archivuj &
+[1] 15635
+
+kde èíslo v závorkách je indentifikátor procesu v rámci aktuálního shellu, a druhé èíslo je už nám dobøe známý PID procesu.
+Zde, je ale program spuštìò za pomocí shellu, takže po úspìšném dokonèení se zobrazí následující hláška:
+
+[1]+ Done ~/data/archivuj
+V pøípadì, že byl proces ukonèen pomocí exit(), hlašení bude mít tvar 
+[1]+ Exit 10 ~/data/archivuj 
+kde, èíslo za exit je návratová hodnota, urèující výmeèný stav. Jednotlivé chyby lze naléz v manuálové stránce programu.
+
+Nìkdy je potøebova pøesunout naopak proces z pozadí na popøedí, protože èasto se stává, že uživatel spustí proces, který bìží
+nad oèekávání hroznì dlouho. Uvažujme o pøed chvilkou zmínìném programu gzip, kdy jsme zaèali dekomplimovat velké množství dat
+a doba èinnosti už nás nutí jít si uvaøit patnácté kafe. V takovém pøípadì pøesun procesu probíhá následovnì, nejdøíve proces zastavíme
+pomocí klávesové zkratky C-z, kdy nám shell vypíše [1]+ Stopped ~/data/archivuj. K pøesunu pozastaveného procesu na pozadí slouží pøíkaz
+bg, který bere jako argument indentifikátor procesu v rámci aktuálního shellu, naopak pøíkaz fg slouží k pøesunu procesu na popøedí.
+Pro pøerušení bìžícího procesu slouží klávesová zkratka C-c
+
+5.5 DOPLNIL BYCH
+
+Název zombie je docela vystihujcící, protože synovský proces pošle informaci o ukonèení pomocí signálu SGCHLD , potom se ukonèí. Jádro si stále udržuje informace o synovské procesu, do té doby než si jeho návratovou hodnotu vyzvedne rodiè, za pomocí volání jádra wait().
