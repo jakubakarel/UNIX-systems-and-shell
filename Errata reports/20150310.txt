@@ -1,18 +1,21 @@
-3. DOPLNIL BYCH 
-- každý uživatel v linuxu je jednoznaènì indentifikován svým UID - User Identification, root má tohle èíslo rovné 0. Uživatelská jména
-se zavádí pouze pro lepší orientaci v systému. V systému se mohou najít soubory v jehož vlastník nemá pøidìlené
-jméno. Tahle situace typický nastává ve chvíli, kdy je z databáze úètù odstranìn záznam o uživateli, ale nejsou napøíklad
-smazána data z jeho domovského adresáøe. Skupiny jsou podobnì jako uživatelé identifikováni èíslem GID - Group Identification
--informace o uživatelský úètech a skupinách jsou uloženy v /etc/passwd a /etc/group, tyhle soubory mají podobnou strukturu. V /etc/passwd
-je øádek ve formátu
-	<název úètu> : <heslo> : <UID> : <GID> : <jméno> : <adresáø> : <shell> 
-V linuxu se záznamy oddìlené dvojteèkou vyskytují pomìrnì èasto, pøevážnì v konfiguraèních a systémových souborech. První položku asi 
-nemusím rozebírat, protože je jasná, druhou položkou je heslo, které je samozøejmì zakódované. Pokud místo heslo uvedeme jeden znak napøíklad "*", tak uživateli znemožníme se pøihlásit na základì heslo. Za heslem následují 2 indentifikaèní hodnoty uživatelského úètu, indetifikace uživatele v rámci systému a indetifikace jeho primární skupiny do které je uživatel zaøazen. Dalším údajem je domovský adresáø, napøíklad 
-/home/student/inf97/novakj a posledním je implicitní shell napøíklad /bin/bash
+FINISHED
+OK 3. DOPLNIL BYCH
+- kaï¿½dï¿½ uï¿½ivatel v linuxu je jednoznaï¿½nï¿½ indentifikovï¿½n svï¿½m UID - User Identification, root mï¿½ tohle ï¿½ï¿½slo rovnï¿½ 0. Uï¿½ivatelskï¿½ jmï¿½na
+se zavï¿½dï¿½ pouze pro lepï¿½ï¿½ orientaci v systï¿½mu. V systï¿½mu se mohou najï¿½t soubory v jehoï¿½ vlastnï¿½k nemï¿½ pï¿½idï¿½lenï¿½
+jmï¿½no. Tahle situace typickï¿½ nastï¿½vï¿½ ve chvï¿½li, kdy je z databï¿½ze ï¿½ï¿½tï¿½ odstranï¿½n zï¿½znam o uï¿½ivateli, ale nejsou napï¿½ï¿½klad
+smazï¿½na data z jeho domovskï¿½ho adresï¿½ï¿½e. Skupiny jsou podobnï¿½ jako uï¿½ivatelï¿½ identifikovï¿½ni ï¿½ï¿½slem GID - Group Identification
+-informace o uï¿½ivatelskï¿½ ï¿½ï¿½tech a skupinï¿½ch jsou uloï¿½eny v /etc/passwd a /etc/group, tyhle soubory majï¿½ podobnou strukturu. V /etc/passwd
+je ï¿½ï¿½dek ve formï¿½tu
+	<nï¿½zev ï¿½ï¿½tu> : <heslo> : <UID> : <GID> : <jmï¿½no> : <adresï¿½ï¿½> : <shell>
+V linuxu se zï¿½znamy oddï¿½lenï¿½ dvojteï¿½kou vyskytujï¿½ pomï¿½rnï¿½ ï¿½asto, pï¿½evï¿½ï¿½nï¿½ v konfiguraï¿½nï¿½ch a systï¿½movï¿½ch souborech. Prvnï¿½ poloï¿½ku asi
+nemusï¿½m rozebï¿½rat, protoï¿½e je jasnï¿½, druhou poloï¿½kou je heslo, kterï¿½ je samozï¿½ejmï¿½ zakï¿½dovanï¿½. Pokud mï¿½sto heslo uvedeme jeden znak napï¿½ï¿½klad "*",
+tak uï¿½ivateli znemoï¿½nï¿½me se pï¿½ihlï¿½sit na zï¿½kladï¿½ heslo. Za heslem nï¿½sledujï¿½ 2 indentifikaï¿½nï¿½ hodnoty uï¿½ivatelskï¿½ho ï¿½ï¿½tu, indetifikace
+uï¿½ivatele v rï¿½mci systï¿½mu a indetifikace jeho primï¿½rnï¿½ skupiny do kterï¿½ je uï¿½ivatel zaï¿½azen. Dalï¿½ï¿½m ï¿½dajem je domovskï¿½ adresï¿½ï¿½, napï¿½ï¿½klad
+/home/student/inf97/novakj a poslednï¿½m je implicitnï¿½ shell napï¿½ï¿½klad /bin/bash
 
-3. PØIDAL BYCH
-program chgrp <skupina> <soubor>, slouží ke zmìne skupiny. U souboru lze ale pouze nastavit skupiny, do kterých patøí vlastník.
-pøíklad
+OK 3. Pï¿½IDAL BYCH
+program chgrp <skupina> <soubor>, slouï¿½ï¿½ ke zmï¿½ne skupiny. U souboru lze ale pouze nastavit skupiny, do kterï¿½ch patï¿½ï¿½ vlastnï¿½x;k.
+pï¿½ï¿½klad
 group novakj
 students wheel
 ls -l todo
@@ -22,17 +25,17 @@ ls-l todo
 -rwxr-xr-x 1 novakj wheel 69 Jun 18 16:45 todo*
 
 
-3. TEÏ UŽ BYCH TAM OPERACI = VÁŽNÌ PØIDAL
-operace = (nastav) u sybolického zadávání práv 
+OK 3. TEï¿½ Uï¿½ BYCH TAM OPERACI = Vï¿½ï¿½Nï¿½ Pï¿½IDAL
+		operace = (nastav) u sybolickï¿½ho zadï¿½vï¿½nï¿½ prï¿½v
 
-pøíklady: pøíkaz			význam
-chmod a=rw, o= todo 			všem nastaví práva na read a write a nakonec skupinì other vymaže práva k souboru todo 
-chmod a=r .forward			všem nastaví práva na soubor .forward
-chmod a - rwx, u=rwx mail 		všem odebere práva rwx a kategorii user nastaví práva na read, write a execute
+pï¿½ï¿½klady: pï¿½ï¿½kaz			vï¿½znam
+chmod a=rw, o= todo 			vï¿½em nastavï¿½ prï¿½va na read a write a nakonec skupinï¿½ other vymaï¿½e prï¿½va k souboru todo
+chmod a=r .forward			vï¿½em nastavï¿½ prï¿½va na soubor .forward
+chmod a - rwx, u=rwx mail 		vï¿½em odebere prï¿½va rwx a kategorii user nastavï¿½ prï¿½va na read, write a execute
 
-4.3 UPRAVIL BYCH
+OK 4.3 UPRAVIL BYCH
 
-/opt/ - v adresáøi bývá obvykle instalován komerèní SW nebo nestandartní balíèky
-/sbin - adresáø obsahuje programy potøebné pro zavedení a administraci systému. Tyto programy jsou používány vesmìs super uživatelem root.
-/var - adresáø s data, která se dynamicky mìní, napøíklad soubory s uživatelskou poštou, www stránky, archivy Network News, fronta pro tiskárnu a podobnì. 
-/etc/fstab - soubor se záznamem o souborových systémech pøipojitelných bìhem života systému. Obsah souboru hraje klíèovou roli pøi startu systému, konkrétnì pøi pøipojování souborových systémù
+DENIED - /opt/ - v adresï¿½ï¿½i bï¿½vï¿½ obvykle instalovï¿½n komerï¿½nï¿½ SW nebo nestandartnï¿½ balï¿½ï¿½ky
+OK /sbin - adresï¿½ï¿½ obsahuje programy potï¿½ebnï¿½ pro zavedenï¿½ a administraci systï¿½mu. Tyto programy jsou pouï¿½ï¿½vï¿½ny vesmï¿½s super uï¿½ivatelem root.
+OK /var - adresï¿½ï¿½ s data, kterï¿½ se dynamicky mï¿½nï¿½, napï¿½ï¿½klad soubory s uï¿½ivatelskou poï¿½tou, www strï¿½nky, archivy Network News, fronta pro tiskï¿½rnu a podobnï¿½.
+OK /etc/fstab - soubor se zï¿½znamem o souborovï¿½ch systï¿½mech pï¿½ipojitelnï¿½ch bï¿½hem ï¿½ivota systï¿½mu. Obsah souboru hraje klï¿½ï¿½ovou roli pï¿½i startu systï¿½mu, konkrï¿½tnï¿½ pï¿½i pï¿½ipojovï¿½nï¿½ souborovï¿½ch systï¿½mï¿½

@@ -15,7 +15,7 @@
 \maketitle
 
 \begin{abstract}
-Tento dokument vzniká jako derivát z mých zápisků z přednášek a cvičení předmětu Unixové systémy a shell vyučovaném katedře informatiky na Přírodovědecké fakultě Univerzity Palackého v Olomouci panem Mgr. Janem Outratou, Ph.D. Použití pouze na vlastní nebezpečí -- výskyt chybných informací není vyloučen.\\
+Tento dokument vzniká jako přepis z mých zápisků z přednášek a cvičení předmětu Unixové systémy a shell vyučovaném katedře informatiky na Přírodovědecké fakultě Univerzity Palackého v Olomouci panem Mgr. Janem Outratou, Ph.D. Použití pouze na vlastní nebezpečí -- výskyt chybných informací není vyloučen.\\
 Děkuji kolegovi Josefu Beťákovi za jeho usilovnou práci při psaní důkladných poznámek a námětů k tomuto dokumentu.
 \end{abstract}
 
@@ -381,10 +381,13 @@ ukázka změny časové známky
 Rekurzivně vypočítá (přesněji spíše odhadne) velikost adresářů v aktuálním adresáři. Volání je velice silně parametrizovatelné a tvar výstupu programu je tak možné silně ovlivnit.
 
 \subsubsection{file}
-Vypíše informace o souboru, který je předán jako vstupní parametr.
+Vypíše informace o souboru, který je předán jako vstupní parametr -- respektive cesta k tomuto souboru.
 \begin{verbatim}
 file helloword.cpp
 helloword.cpp: C source, ASCII text
+
+file ~/data/tex/zivotopis.pdf
+./data/tex/zivotopis.pdf: PDF document, version 1.2
 \end{verbatim}
 
 \subsubsection{cat}
@@ -461,9 +464,29 @@ Změna přístupových práv (viz. níže).
 \section{Přístupová práva v Unixu}
 V Unixu je každému souboru nebo adresáři přidělen uživatel, který je jeho vlastníkem a skupina, do které spadá. Přístupová práva se pak nastavují zvlášť pro vlastníka (u -- user), skupinu (g -- group) a ostatní (o -- others). Souborům pro jednotlivé účastníky lze přidělit právo na čtení (r -- read), zápis (w -- write) a spouštění (x -- execute). Pro adresáře pak právo na výpis podadresářů a jejich souborů (r), vytváření podadresářů a souborů (w) a vstup do adresáře (x). Pro vyznačení se používají speciální bity, ve kterých jsou přístupová práva zapsána. 
 
-Přístupová práva se mění příkazem chmod ke kterému můžeme přidat parametr -R, který způsobí rekurzivní aplikaci změny (pokud měníme práva pro adresář, změní se stejně práva i pro všechny soubory a adresáře, které v něm jsou)
-\subsubsection{Zadání práv symbolicky}
-Práva zadáme v tomto tvaru [ugoa][+-=][rwxXstugo]. To znamená, že nejprve zadáme, koho se změna týká (a -- all), poté uvedeme zda práva přidáváme, odebíráme a nebo nastavujeme a poté specifikujeme o jaká práva se jedná.
+Přístupová práva se mění příkazem \textbf{chmod} ke kterému můžeme přidat parametr -R, který způsobí rekurzivní aplikaci změny (pokud měníme práva pro adresář, změní se stejně práva i pro všechny soubory a adresáře, které v něm jsou). Další věc, kterou můžeme u souborů měnit je skupina, do které soubor patří. K tomu slouží příkaz \textbf{chgrp}
+
+Uživatel je v Linuxu jednoznačně identifikován svým UID -- User Identification. Root má UDI rovno 0. Uživatelská jména se zavádí pouze pro zlepšení orientace uživatele při práci se systémem. V systému lze nají soubory, které nemají nastaveného žádného vlastníka. Ke \uv{vzniku} takových souborů dojde při odstranění záznamu o uživateli z databáze účtů, ale nejsou smazána jeho data, například z domovských adresářů. 
+
+Skupiny jsou podobně jako uživatelé identifikovány svým GID -- Group Identification. Zopakujme, že informace o uživatelských účtech, skupinách a heslech jsou uloženy v /etc/passwd a /etc/group -- tyto soubory mají podobnou strukturu. Jeden řádek v /etc/passwd vypadá takto:
+\begin{verbatim}
+<název účtu> : <heslo> : <UID> : <GID> : <jméno> : <adresář> : <shell> 
+\end{verbatim}
+V linuxu se záznamy oddělené dvojtečkou vyskytují poměrně často, převážně v konfiguračních a systémových souborech. Pokud položku \textbf{heslo} nastavíme na jeden znak, například \uv{*}, zamezíme uživateli přihlášení do systému pomocí hesla. Předposlední údaj představuje domovský adresář daného uživatele a poslední údaj je implicitní shell -- například /bin/bash. Význam ostatních údajů je zřejmý.
+
+\begin{verbatim}
+group novakj
+students wheel
+ls -l soubor1
+-rwxr-xr-x 1 novakj student 69 Jun 18 16:45 soubor1
+chgrp wheel soubor1
+ls-l soubor1
+-rwxr-xr-x 1 novakj wheel 69 Jun 18 16:45 soubor1
+\end{verbatim}
+Uživatel může souboru nastavit příslušnost pouze do skupin, ve kterých je sám členem.
+
+\subsection{Zadání práv symbolicky}
+Práva zadáme v tomto tvaru [ugoa][+-=][rwxXstugo]. To znamená, že nejprve zadáme, koho se změna týká (a -- all), poté uvedeme zda práva přidáváme, odebíráme a nebo \uv{natvrdo} nastavujeme a poté specifikujeme o jaká práva se jedná. 
 \begin{verbatim}
 chmod u-w text.txt
 \end{verbatim}
@@ -474,7 +497,17 @@ chmod u+rw text.txt
 \end{verbatim}
 Uživateli (u -- user) přidej (+) práva na čtení (r -- read) a zápis (w -- write) u souboru text.txt.
 
-\subsubsection{Zadání práv osmičkově}
+\begin{verbatim}
+chmod a=rw, o= text.txt
+\end{verbatim}
+Všem (a~--~user, group, others) nastav (=) práva na čtení (r) a zápis (w) a poté ostatním (o~--~others) nastav (=) doslova žádná práva (za rovná se je v příkazu mezera) u souboru text.txt.
+
+\begin{verbatim}
+chmod a - rwx, u=rwx mail
+\end{verbatim}
+Všem odeber práva na čtení, zápis a spouštění a posléze uživateli nastav práva na čtení, zápis a spuštění.
+
+\subsection{Zadání práv osmičkově}
 Abychom mohli přístupová práva zadávat pomocí osmičkového zápisu, musíme si nejprve stanovit, jaké \uv{hodnoty} budou reprezentovat jaká práva. Pro čtení máme hodnotu 4 (4=r), pro zápis 2 (w=2) a pro spouštění hodnotu 1 (x=1). Práva nastavujeme pro všechny 3 skupiny současně a tak například hodnota 660 představuje práva na čtení a zápis pro uživatele a skupinu a žádná práva pro ostatní.
 
 \begin{verbatim}
@@ -502,20 +535,20 @@ V tabulce \ref{dirTable} najdete seznam důležitých adresářů, které se v l
 /mnt/ & ostatní souborové systémy, které nemusí být nutně výměnná zařízení (floppy, cdrom)\\
 /opt/ & softwarové aplikace, které nejsou standardní součástí distribuce\\
 /proc/ & soubory nastavení a stavu systému a jednotlivých procesů -- \uv{mapa stavu paměti RAM}\\
-/proc/kcore & obraz celé virtuální paměti systému.\\ 
-/root/ & domovský adresář superuživatele.\\
-/sbin/ & systémové privilegované spustitelné soubory -- přístupné pro root\\
+/proc/kcore & obraz celé virtuální paměti systému\\ 
+/root/ & domovský adresář superuživatele\\
+/sbin/ & systémové privilegované spustitelné soubory -- programy potřebné pro zavedení a administraci systému -- přístupné pro superuživatele root\\
 /srv/ & serverové aplikace\\
 /sys/ & virtuální systémový adresář\\
 /tmp/ & smetiště, dočasný adresář, vytvořit zde adresář může kdokoliv, ale smazat ho může jen vlastník\\
 /usr/ & obsahuje další stromovou strukturu, který obsahuje velké množství informací o systému, jeho nastavení, jeho zdrojové kódy, spustitelné a konfigurační soubory -- veškerá data systému\\
-/var/ &  soubory, jejichž obsah se během chodu systému většinou mění\\
+/var/ &  soubory, jejichž obsah se během chodu systému dynamicky mění, například soubory s uživatelskou poštou, www stránky, archivy Network News, fronta pro tiskárnu a podobně\\
 /dev/mem/ & speciální soubor pro práci s pamětí\\
 /dev/null & \uv{černá díra}, bezedný kontejner, do kterého můžeme převést výstup, který nás nezajímá, zapsaná data nelze dostat zpět\\
 /dev/full & simuluje zaplněné zařízení -- testování výjimky zápisu do plného souboru\\
 /etc/passwd/ & soubor založených uživatelů\\
 /etd/shadow & soubor uživatelských hesel a jejich vlastností (šifrované)\\
-/etc/fstab/& (FileSystem TABle) popisuje jednotlivé systémové svazky\\
+/etc/fstab/& (FileSystem TABle) popisuje jednotlivé systémové svazky připojitelné během života systému, obsah souboru hraje klíčovou roli při připojování souborových systému při startu systému\\
 \end{tabular} 
 \end{center}
 \label{dirTable}
@@ -553,21 +586,32 @@ a
 \end{verbatim} 
 
 \section{Systém procesů}
-Program je spustitelný soubor. Proces je aktivní reprezentace programu. Vzniká spuštěním programu. Každý proces při svém vzniku získá PID -- unikátní číselný identifikátor procesu. Plánovač procesů procesům cyklicky přiděluje výpočetní čas procesoru a umožňuje tak multitasking. Stejně jako adresářová struktura je i systém procesů stromová hierarchie. Kořenový proces se jmenuje init a má PID 1. Je to proces, který běží vždy, když běžím systém. Každý proces musí mít nastaveného předka (rodiče).
+Program je spustitelný soubor uložený na disku. Je-li program spuštěn, jádro zavede jeho obraz do paměti a začne vykonávat v něm obsažené instrukce. Proces je aktivní reprezentace programu. Každý proces při svém vzniku získá PID -- unikátní číselný identifikátor procesu. Plánovač procesů procesům cyklicky přiděluje výpočetní čas procesoru a umožňuje tak multitasking. Stejně jako adresářová struktura je i systém procesů stromová hierarchie. Kořenový proces se jmenuje init a má PID 1. Je to proces, který běží vždy, když běžím systém. Každý proces musí mít nastaveného předka (rodiče).
 
 Jako shell se označuje příkazový interpret, který vykonává příkazy v textovém režimu. Stará se o jejich spouštění a správu -- vykonávaným příkazům se pak říká úlohy.
+
+Během práce se systémem se lze setkat se třemi druhy procesů:
+\begin{itemize}
+\item Uživatelské procesy -- userspace processes -- jsou spouštěny jednotlivými uživateli.
+\item Systémové procesy -- deamons -- jsou spouštěny během startu systému, zpravidla v nekonečné smyčce a zajišťují různé služby jako třeba periodickou obsluhu klientů.
+\item Vlákna jádra -- kernel threads -- jsou v podstatě speciální části jádra běžící jako procesy. Například vlákno \textbf{kmod} se stará o zavádění vyžadovaných modulů jádra do paměti.
+\end{itemize}
 
 \subsection{Výpis procesů}
 \subsubsection{ps aux}
 Vypíše všechny běžící procesy na standardní výstup. 
 \subsubsection{top}
-Jak už název napovídá, toto zobrazení je nejlepší. Výpis v hlavičce obsahuje statistické informace o celkovém množství běžících procesů, kolik z nich aktuálně běží, kolik jich je zastavené, spí nebo je zombie. Dále zobrazuje souhrnné informace o operační paměti a procesoru. Tabulka procesů je seřazená podle \% využití procesoru, navíc se sama po několika vteřinách aktualizuje.
+Jak už název napovídá, toto zobrazení je nejlepší. Výpis v hlavičce obsahuje statistické informace o celkovém množství běžících procesů, kolik z nich aktuálně běží, kolik jich je zastavené, spí nebo je zombie. Dále zobrazuje souhrnné informace o operační paměti a procesoru. Tabulka procesů je seřazená podle \% využití procesoru, navíc se sama po několika vteřinách aktualizuje. Jak už je obvyklé, náhled programu ukončujeme klávesou \textbf{q}. Pro zobrazení nápovědy lze použít klávesu \textbf{h}
 \subsubsection{pstree}
 Zobrazení stromové ASCII art hierarchie procesů.
 
 \subsection{Ukončení procesu}
 \subsubsection{kill}
-Příkaz kill násilně ukončí proces. Funguje tak, že procesu pošle číselný signál. K některým signálům lze implementovat jejich zpracování v programu, některým se ale nelze bránit. K bezprostřednímu ukončení procesu zle použít signál 9. V příkladu číslo 544 reprezentuje PID ukončovaného procesu.
+Program \textbf{kill} funguje tak, že procesu pošle číselný signál a to ve tvaru:
+\begin{verbatim}
+kill -<signál> <procesy>
+\end{verbatim} 
+Za signál můžeme dosadit buďto číslo nebo jméno (konstantu) signálu. K některým signálům lze implementovat jejich zpracování v programu, některým se ale nelze bránit. K bezprostřednímu ukončení procesu zle použít signál 9 (SIGKILL, který spolu s SIGSTOP patří mezi signály, kterým se proces nedokáže bránit). Jako další signály můžeme uvést SIGSTOP a SIGCOUNT díky kterým můžeme proces pozastavit a poté ho třeba přesunout na pozadí. Za parametr procesy můžeme dosadit buďto PID procesu nebo identifikátor procesu v rámci aktuálního shellu, ve tvaru \%\textless id\textgreater. V příkladu číslo 544 reprezentuje PID ukončovaného procesu.
 \begin{verbatim}
 kill -9 544 
 \end{verbatim}
@@ -580,30 +624,87 @@ man 7 signal
 Při ukončení proces vrací svému rodiči číselnou hodnotu. Konvence a zvyklosti stanovují, že pokud program vrátí hodnotu 0, jeho výpočet skončil v pořádku. Jakákoliv nenulová hodnota znamená chybu. Při ukončení procesu jsou ukončeny i jeho potomci -- rodič má zodpovědnost za svoje potomky, tedy i za jejich korektní ukončení. Rodič může zařídit, aby nebyli při jeho smrti ukončeni jeho potomci. Pokud je rodič ukončen a jeho potomci zůstávají, nastaví se jejich rodič (protože každý proces musí mít nastaveného rodiče) na proces init (PID 1).
 
 \subsection{Plánované spouštění programů}
+V unixových operačních systémech je možné plánovat spouštění programů a vykonávání příkazů. Jinak řečeno, uživatel může stanovit čas a proces, který má být v daný čas spuštěn. O takové spuštění se pak nestará jádro operačního systému, ale je plně v režii systémových deamonů. Plánované spuštění může být buďto jednorázové nebo periodické.
 \subsubsection{at}
-Slouží k jednorázovému plánovanému spuštění procesu. Jako parametr se předá jméno souboru, který se ve stanovenou dobu spustí. 
+Slouží k jednorázovému plánovanému spuštění procesu. Jako parametr se předá jméno souboru, který se ve stanovenou dobu spustí. Program lze použít ve tvaru: \begin{verbatim}
+at <čas> <datum> +<přírustek>
+\end{verbatim}
+Příkaz v tomto tvaru spustí interaktivní režim, ve kterém je ještě potřeba zadat program, který bude spuštěn.
+\begin{verbatim}
+at 11:30 26.4.2015
+warning: commands will be executed using /bin/sh
+at> ls -la ~
+at> C-d
+job 3957 at Wed Mar 11 20:58:00 2015
+\end{verbatim}
+Číslo job nelze chápat jako PID, protože proces v době plánování ještě neběží, je pouze vytvořen záznam o jeho spuštění. Seznam naplánovaných procesů můžeme vypsat pomocí příkazu \textbf{atq}.
+\begin{verbatim}
+atq
+3957    Wed Mar 11 20:58:00 2015 a betajo00
+\end{verbatim}
+Naplánované procesy lze zrušit programem \textbf{atrm}, kterému jako parametr předáme id naplánované úlohy.
+\begin{verbatim}
+atrm 3957
+\end{verbatim}
 
-\subsubsection{cron}
-Podobně jako at umožňuje spustit plánovaný proces ale s tím rozdílem, že umožňuje periodické spouštění. 
+\subsubsection{cron a crontab}
+Podobně jako \textbf{at} umožňuje \textbf{cron}, respektive \textbf{crontab}, spustit plánovaný proces ale s tím rozdílem, že umožňuje periodické spouštění (i \textbf{at} umožňuje periodické spouštění a to v případě, že poslední předaný příkaz bude opětovné spuštění sebe sama -- v takovém případě je ale nutné použít časový posun). O spuštění programu \textbf{crontab} se staré deamon \textbf{bf}. Program \textbf{crontab} bývá používán dvěma způsoby:
+\begin{verbatim}
+crontab -u <uživatel> <soubor>
+crontab -l <uživatel>
+\end{verbatim}
+První příkaz nastaví tabulku spouštěných procesů pro uživatele \textless uživatel\textgreater, přitom vzorem tabulky je soubor \textless soubor\textgreater. Druhým příkazem je možné zobrazit nastavenou tabulku. Každý řádek v tabulce reprezentuje jednu periodicky spouštěnou úlohu. Začíná-li řádek znakem hash \# (\uv{kanál}), pak se jedná o komentář a celý řádek je ignorován. Ostatní řádky musí mít tvar:
+\begin{verbatim}
+<minuta> <den> <měsíc> <den v týdnu> <příkaz>
+\end{verbatim}
+Časové údaje mohou být číselné nebo místo nich může být uvedený znak *, který znamená \uv{kdykoliv}. Číselný údaj může být uveden pouze jeden nebo musí být odděleny čárkami -- to v případě, že bychom chtěli script spouštět například ve čtvrtek i v pátek. V následujícím příkladu je použit příkat \textbf{cat}, aby byla očividná struktura uložení procesů.
+\begin{verbatim}
+cat ~/cron-my.tab
+#moje akce
+5 0 * * *				~/prvni-script
+0, 10, 20, 30, 45, 50 14 1 * * 		~/druhy-script
+15 4 * * sun				~/treti-script
+\end{verbatim}
+Pozor! Pokud nastavíme hvězdičky u všech časových parametrů, bude se script spouštět každou minutu až do konce věků druidů.
 
 \subsection{Priority procesů}
-Procesům se nastavuje priorita v intervalu od $-20$ (nejvíce agresivní) do 19 (nejméně agresivní).
+Procesům se nastavuje priorita v intervalu od $-20$ (nejvíce agresivní) do 19 (nejméně agresivní). Priorita procesům určitě, jak často jim bude přidělován procesorový čas. Uživatel může nastavovat, respektive měnit, prioritu pouze svým procesům.
 \subsubsection{nice}
 Příkaz nice slouží ke změně priority neběžících procesů -- spustí proces s předanou prioritou
 \begin{verbatim}
 nice --5 bluefish
 \end{verbatim}
-Spustí editor Bluefish s prioritou $-5$. Základní priorita je nastavena na 10.
+Spustí editor Bluefish s prioritou $-5$. Základní priorita je nastavena na 10. Zápornou prioritu ale může nastavovat pouze root. 
 
 \subsubsection{renice}
-Slouží ke směně priority již běžících procesů.
+Slouží ke změně priority již běžících procesů.
+\begin{verbatim}
+nice -n 10 ~/data/archivuj &
+[1] 24532
+renice 20 -p 24532
+24532: old priority 10, new  priority 20
+\end{verbatim}
 
 \subsection{Řízení úloh v shellu}
-Úlohy můžou běžet na pozadí nebo na popředí. Pokud běží úloha na popředí, blokuje shell, do kterého pak není možné zadávat další příkazy -- programu je umožněn výstup na terminál. Pokud běží na pozadí (toho docílíme tak, že při spouštění uvedeme na konec \&), je možné zadávat další příkazy a spouštět další programy. Program běžící na pozadí by ale neměl vypisovat výstup na terminál.
+Úlohy můžou běžet na pozadí nebo na popředí. Pokud běží úloha na popředí, blokuje shell, do kterého pak není možné zadávat další příkazy -- programu je umožněn výstup na terminál. Pokud běží na pozadí (toho docílíme tak, že při spouštění uvedeme na konec \&), je možné zadávat další příkazy a spouštět další programy. Program běžící na pozadí by ale neměl vypisovat výstup na terminál -- to by bylo velice rušivé. Zároveň by neměl být interaktivní. Interakce s uživatelem by opět způsobila zásah do okna shellu, tedy zásah do aktuální práce uživatele.
 
-K výpisu aktuálně běžících úloh slouží příkaz jobs. Pro převedení úlohy z pozadí na popředí můžeme použít příkaz \textbf{fg}. Při opačném převodu -- z popředí na pozadí -- musíme použít vícekrokový přístup. Úlohu nejprve pomocí CTRL + Z pozastavíme. Teprve poté můžeme pomocí příkazu \textbf{bg} úlohu převést na pozadí. Pro doplnění a zopakování uvedeme klávesovou zkratku CTRL + C, která provede násilné ukončení úlohy běžící na popředí.	
+\begin{verbatim}
+$~/data/archivuj &
+[1] 15635
+\end{verbatim}
+\dots číslo v závorkách je identifikátor procesu v rámci aktuálního shellu, druhé číslo je PID procesu. Protože je program spuštěn pomocí shellu, bude po jeho úspěšném ukončení vypsáno:
+\begin{verbatim}
+[1]+ Done ~/data/archivuj
+\end{verbatim}
+Respektive:
+\begin{verbatim}
+[1]+ Exit 10 ~/data/archivuj
+\end{verbatim}
+v případě, že byl program ukončen s jinou návratovou hodnotou, než je 0. Tato návratová hodnota je pak vypsána za klíčovým slovem exit.
 
-Jako zombie se označuje proces, u kterého si rodič ještě nevyzvedl návratovou hodnotu.
+K výpisu aktuálně běžících úloh slouží příkaz jobs. Pro převedení úlohy z pozadí na popředí můžeme použít příkaz \textbf{fg}. Při opačném převodu -- z popředí na pozadí -- musíme použít vícekrokový přístup. Úlohu nejprve pomocí CTRL + Z pozastavíme. Teprve poté můžeme pomocí příkazu \textbf{bg} úlohu převést na pozadí. Proč bychom chtěli nějakou úlohu provádět na pozadí? Unix je ze své podstaty víceúlohový a na pozadí, přesně jak bychom očekávali, probíhá velké množství systémových úloh bez našeho aktivního vědomí. Přidat k nim (na pozadí) další úlohu může být výhodné ve chvíli, kdy nás námi spuštěná úloha dobou svého zpracování nutí si jít uvařit patnáctou kávu (třeba dlouhé rozbalování programem \textbf{gzip}. Pro doplnění a zopakování uvedeme klávesovou zkratku CTRL + C, která provede násilné ukončení úlohy běžící na popředí.	
+
+Jako zombie se označuje proces, u kterého si rodič ještě nevyzvedl návratovou hodnotu. Název zombie je poměrně vystihující, protože proces pošle informaci o svém ukončení pomocí signálu SGCHLD a poté se ukončí. Jádro si poté informace o procesu udržuje do té doby, než si jeho návratovou hodnotu jeho rodič nevyzvedne, a to pomocí volání jádra wait().
 
 \section{Vstup a výstup programu}
 Každý program má vstup, výstup a chybový výstup pro výstup chyb. Program tak můžeme chápat jako filtr, který převede vstup na výstup. Vstup souboru můžeme přesměrovat tak, aby jím byl soubor.
@@ -648,7 +749,7 @@ Pro zpracování textu máme k dispozici již představené a z velké většiny
 
 S příkazy cat, head a wc jsme se dostatečně seznámili v kapitole \ref{section:Zaklad} a teď už se budeme věnovat pouze jejich aplikaci. K doplnění ještě uvedeme příkaz \textbf{tac}, který funguje stejně jako cat, jen vypisuje řádky od konce souboru.
 
-\subsubsection{Třídění řádků a sloupců souboru -- sort}
+\subsubsection{Třídění řádků a sloupců souboru sort}
 Na textový soubor lze snadno pohlížet i jako na tabulku, kde je potřeba jeden znak vybrat jako oddělovač sloupců. Program sort projde řádky souboru a podle zadaných parametrů je setřídí. Pokud nemá, kromě tříděného souboru, zadaný žádný parametr, třídí lexikograficky vzestupně. Třídění pak můžeme ovlivnit přepínači dle tabulky \ref{tabSort}.
 
 \begin{table}
@@ -665,7 +766,7 @@ Na textový soubor lze snadno pohlížet i jako na tabulku, kde je potřeba jede
 \label{tabSort}
 \end{table}
 
-\subsubsection{Práce se sloupci -- cut a paste}
+\subsubsection{Práce se sloupci cut a paste}
 Program cut umožňuje ze souboru \uv{vyříznout} vybraný sloupec. Výchozím oddělovačem, který cut používá pro rozdělení souboru do sloupců, je tabulátor. Pomocí parametru \textbf{-d} můžeme nastavit libovolný oddělovač. Parametr \textbf{-f} nám dle čísla (zleva se sloupce \uv{číslují} od 1) určit sloupec, který vybíráme.
 
 \begin{verbatim}
@@ -681,8 +782,8 @@ cut -f 1 tab2.txt
 Program paste nám umožní vyříznuté sloupce souborů opět spojit do jednoho. Přepínač \textbf{-d} určuje, jaký oddělovač se má použít pro spojení sloupců. Pokud budeme chtít spojit sloupce pod sebe, nikoliv vedle sebe, můžeme použít soubor cat s více vstupními soubory.
 
 
-\subsubsection{Rozdíl souborů}
-K určování rozdílu mezi dvěma soubory slouží program \textbf{diff}. 
+\subsubsection{Rozdíl souborů a adresářů diff}
+K určování rozdílu mezi dvěma soubory slouží program \textbf{diff}. Program diff vypíše výstup, který popisuje rozdíly mezi soubory po řádcích. 
 
 
 \newpage

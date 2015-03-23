@@ -1,6 +1,6 @@
-2.4.24 NAHRADIL BYCH 
-- jako parametr je pøedána ceska k souboru
-pø. 
+FINISHED
+2.4.24 NAHRADIL BYCH
+OK - jako parametr je pøedána ceska k souboru
+pø.
 file ~/data/tex/zivotopis.pdf
 ./data/tex/zivotopis.pdf: PDF document, version 1.2
-
