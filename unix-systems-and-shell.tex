@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[czech]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{a4wide}
+
+\title{\Huge{Unixové systémy a shell 2021/2022}\\
+\vspace{1em}
+\normalsize{Přednášky s trochou omáčky}}
+\author{\normalsize Jakub Karel}
+\date{\today}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Tento dokument vzniká jako zcela přepracovaná verze dokumentu, který k podobnému předmětu vznikl před mnoha lety. Cílem je poskytnou sobě a ostatním studentům ucelený text, který bude obsahovat veškeré potřebné informace k úspěšném splnění předmětu a to čtivou formou a s řadou doplňkových informací a ukázek. Pokud se nespokojíte s nutným minimem informací z prezentace z přednášky, pak jste na správném místě. Protože jsem Linuxový pleb bez časového komfortu, dá se předpokládat, že v textu budou překlepy a faktické chyby. Pokud mi pomůžete tyto chyby odstranit, bude mi ctí vaše jméno či přezdívku s velkým díkem zapsat do úvodního slova. Použití textu je pouze na vlastní nebezpečí!!!
+\end{abstract}
+
+\thispagestyle{empty}
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\setcounter{page}{1}
+
+\section{Úvodní slova}
+\subsection{Testovací prostředí}
+K vytvoření tohoto dokumentu byl použit typografický nástroj \LaTeXe. K testování příkazu a skriptů jsem použil {\bf Ubuntu} nainstalované na Windows 11 v rámci {\bf Windows Subsystem for Linux}. Pokud pracujete na Windows, mohu tento postup doporučit.
+
+//TODO návod na WSL?
+
+\subsection{Konvence textu}
+Všechny texty, příkazy, parametry, skripty\dots Zkrátka vše, co se zadává do terminálu a zároveň všechny odpovědi terminálu, budou vysázeny následujícím způsobem.
+\begin{verbatim}
+ping google.com
+\end{verbatim}
+Přestože každý nový řádek v shellu vypadá nějak takto:
+\begin{verbatim}
+kareja00@DESKTOP-720CJ5H:~$
+\end{verbatim}
+\dots budu ve většině ukázek tuto část, ač je velice důležitá, pro zjednodušení vynechávat. Parametry představené u některých funkcí rozhodně nejsou všechny parametry, které tyto funkce umí zpracovat. Dokonce i funkce, které jsou představeny jako funkce bez parametrů, jich umí většinou řadu zpracovat. Úroveň hloubky zkoumání tedy odpovídá aktuálním výukovým potřebám. Další informace je možné získat z manuálových stránek.
+
+\subsection{Errata}
+Pokud v dokumentu narazíte na chybu, prosím neváhejte a ozvěte se mi.
+
+\newpage
+
+
+
+
+
+
+\end{document}
