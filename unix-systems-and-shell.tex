@@ -2,6 +2,8 @@
 \usepackage[czech]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{a4wide}
+\usepackage{graphicx}
+\usepackage{float}
 
 \title{\Huge{Unixové systémy a shell 2021/2022}\\
 \vspace{1em}
@@ -24,8 +26,10 @@ Tento dokument vzniká jako zcela přepracovaná verze dokumentu, který k podob
 \setcounter{page}{1}
 
 \section{Úvodní slova}
+Na dokumentu se aktivně pracuje. Některé části v podstatě přeskakuji a vrátím se k ním později.
+
 \subsection{Testovací prostředí}
-K vytvoření tohoto dokumentu byl použit typografický nástroj \LaTeXe. K testování příkazu a skriptů jsem použil {\bf Ubuntu} nainstalované na Windows 11 v rámci {\bf Windows Subsystem for Linux}. Pokud pracujete na Windows, mohu tento postup doporučit.
+K vytvoření tohoto dokumentu byl použit typografický nástroj \LaTeXe. K testování příkazu a skriptů jsem použil \textbf{Ubuntu} nainstalované na Windows 11 v rámci \textbf{Windows Subsystem for Linux}. Pokud pracujete na Windows, mohu tento postup doporučit.
 
 //TODO návod na WSL?
 
@@ -45,9 +49,301 @@ Pokud v dokumentu narazíte na chybu, prosím neváhejte a ozvěte se mi.
 
 \newpage
 
+\section{Operační systém}
+Operační systém je základní softwarové vybavení počítače, které se stará o správu systémových zdrojů. Tvoří rozhraní mezi aplikačními (uživatelskými) programy a hardwarem a stará se například~o:
+
+\begin{itemize}
+\item organizaci přístupu k datům
+\item spouštění aplikací a řízení jejich průběhu
+\item přidělování aplikacím hardwarové prostředky -- čas a místo v paměti a na procesoru, přístup k periferním zařízením, přístup k datovým souborům, atd. a to skrze ovladače hardwaru.
+\end{itemize}
+
+Operační systém je privilegovaný program kontrolující jiné programy, kterým poskytuje rozhraní (\textbf{API}) pro komunikaci. Dále by měl obsahovat uživatelské rozhraní pro člověka.
+
+\subsection{Základní části OS}
+\begin{itemize}
+\item \textbf{jádro} (kernel) se stará o správu zdrojů (hardware), o ovladače hardware a o úlohy (procesy).
+\item \textbf{základní programy} používají hardware, pracují s daty a slouží k ovládání počítače.
+\item \textbf{uživatelské rozhraní} -- dnes interaktivní, textové a nebo grafické.
+\end{itemize}
+
+\subsection{UNIX a GNU/Linux}
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.2]{tux.jpg}
+\end{center}
+\caption{Tux -- maskot unixových operačních systémů}
+\end{figure}
+
+Jedním z nejvýznamnějších zástupců unixových operačních systému je systém GNU/Linux. Tento operační systém je velmi populární a hlavně rozšířený. Můžeme ho najít například v clusterech, serverech, PC, tabletech, v mobilech a v dalších zařízeních.  I přes velkou popularitu ale zůstává systém nepochopen a to především z hlediska základních principů, filosofie a uživatelských návyků. Většina \uv{řadových} uživatelů se tak při svém používání setká pouze se zlomkem možností, které se ukrývají pod grafickým uživatelským rozhraním. 
+
+Unix je prvním operačním systémem, který byl napsán ve vyšším programovacím jazyce -- v jazyce C (1973). Do té doby se programy napsané ve vyšších programovacích jazycích považovaly za příliš pomalé na to, aby mohly sloužit jako operační systém. Výměna assembleru za jazyk C dovolila programovat větší a propracovanější projekty, které se lépe udržovaly a opravovaly. Přestože je koncepce systému Unix stará přes 40 let, stále je funkční a inspirující.
+
+Při práci se systémem si všimnete jedné zajímavosti. Unixové systém jsou \uv{tiché}. To znamená, že při úspěšném vykonání nějaké operace ve většině případů uživateli nesdělí, že operace proběhla v pořádku. V případě, kdy došlo k chybě tuto chybu pochopitelně zobrazí. Toto chování vychází z historických potřeba a možností tehdejších zobrazovacích zařízení a uživatelů. Když se ještě výstup z počítače tisk na tiskárnu, bylo pochopitelně žádoucí, aby množství vytištěného textu bylo co nejmenší.
+
+\section{Textové uživatelské prostředí}
+Příkazová řádka, terminál, shell.
+//TODO Shell-talk
+\subsection{Základní ovládání}
+Pro pohyb v řádku v okně terminálu slouží šipky $\leftarrow$ a $\rightarrow$. Klávesy \textbf{delete} a {\textbf backspace} slouží k mazání znaků a pozici kurzoru, respektive na pozici před kurzorem. Klávesa \textbf{home} slouží pro přechod na začátek řádku a klávesa \textbf{end} pro přechod na jeho konec. Šipky $\uparrow$ a $\downarrow$ slouží k pohybu v historii příkazů.
+
+\subsection{Klávesové zkratky}
+Klávesové zkratky jsou bezesporu klíčem k efektivnímu a pohodlnému ovládání snad všech slušně navržených uživatelských rozhraní. V tabulce \ref{tab:shortcuts} naleznete důležité a užitečné klávesové zkratky. Doporučuji si je všechny vyzkoušet a alespoň některé z nich si osvojit.
+
+\begin{table}[H]
+\begin{tabular}{l l}
+ctrl + L & Smaže obrazovku terminálu (lze také použít klávesu clear).\\
+ctrl + K & Text od pozice kurzoru až do konce řádku přesune do schránky a smaže.\\
+ctrl + Y & Vloží do řádku text, který byl uložen do schránky příkazem ctrl~+~K.\\
+ctrl + R & Spustí interaktivní prohledávání historie příkazů.\\
+ctrl + A & Přejde na začátek řádku -- stejně jako {\textbf home}.\\
+ctrl + E & Přejde na konec řádku -- stejně jako {\textbf end}.\\
+ctrl + G & Provede ukončení akce (neplést s ukončením probíhající akce).\\
+ctrl + U & Smaže znaky od pořádku řádku do pozice kurzoru.\\
+ctrl + T & Zamění poslední dva znaky a posune se vpravo.\\
+ctrl + \_ & Krok zpět -- undo.\\
+ctrl + alt + T & Spustí terminálové okno.\\
+ctrl + shift + Q & Uzavře terminálové okno.
+\end{tabular}
+\caption{Užitečné klávesové zkratky}
+\label{tab:shortcuts}
+\end{table}
+
+\subsection{Základní příkazy v shellu}
+Zadávání příkazů je case sensitive -- to znamená, že striktně záleží na velikosti písmen v zadávaných příkazech. Příkaz \uv{ping} fungovat bude, zatímco příkaz \uv{Ping} už ne. Většině příkazů lze při volání předat řadu vstupních argumentů. Argumenty předáváme tak, že za jméno příkazu/programu uvedeme jméno argument a jeho hodnotu. Jména argumentů začínají buďto jednou pomlčkou, která je následována obecně několika málo znaky a nebo dvěma pomlčkami, kde následuje celé nezkrácené jméno argumentu.
+
+V případě nouze je zde k dispozici velice zručná klávesa \textbf{Tab}, protože dokáže doplnit rozepsané jméno programu, souboru nebo adresáře. Při první stisku doplní jméno v případě, že je na výběr pouze jedna možnost. Pokud nedoplní, pak je možností víc. Další stisk klávesy tab pak vypíše všechny možnosti, kterými můžeme pokračovat. 
+
+\begin{center}
+Doplňování cesty klávesou tab je velmi mocné. \cite{vychodilPrirucka}
+\end{center}
+
+Z počátku není nutné se naučit kompletně celou referenční příručku, ale je důležité se naučit alespoň několik základních příkazů a to, jak se používají. Vaše práce bude jinak zdlouhavá a otravná, protože se budete muset neustále dívat do materiálů, prohledávat manuálové stránky a nebo hledat na internetu. Vždy je lepší si udělat kvalitní základ a pak se na 100\% soustředit na problém, který se snažíme vyřešit, aniž bychom museli válčit se základy a nebo prostředím.
+
+\subsubsection{logout}
+Pokud se nejedná o grafickou emulaci terminálu ale o plnohodnotný shell, provede odhlášení ze systému. V opačném případě po zavolání uživateli zahlásí:
+\begin{verbatim}
+logout
+bash: logout: not login shell: use `exit'
+\end{verbatim}
+
+\subsubsection{exit}
+Ukončí grafickou emulaci terminálu (okno terminálu v GUI). Při zavolání vrací své jméno, které se do okna terminálu vypíše ještě předtím, než se okno uzavře. obecně funkce exit ukončuje předaný proces.
+
+\begin{verbatim}
+exit
+exit
+\end{verbatim}
+
+\subsubsection{passwd}
+Slouží ke změně hesla aktuálně přihlášeného uživatele. Nejprve jste požádání o současné heslo, poté o nové a poté ještě o zopakování nového heslo pro potvrzení.
+\begin{verbatim}
+passwd
+Changing password for kareja00.
+(current) UNIX password: 
+Enter new UNIX password: 
+Retype new UNIX password: 
+passwd: password updated successfully
+\end{verbatim}
+Můžete si všimnout, že UNIX vám pro jistotu připomene, pro jakého uživatele to vlastně měníte heslo. Při zadávání nejsou vypisovány žádné znaky (toto chování lze přenastavit tak, aby systém vypisoval zadaný zástupný znak), takže se nelekejte, že kurzor zůstává na místě.
+
+\subsubsection{echo}
+Jak už název trochu napovídá, tento program vezme cokoliv, co je mu předáno jako vstupní argument, a vypíše to jako svůj výstup do terminálu.
+\begin{verbatim}
+echo lorem ipsum
+lorem ipsum
+\end{verbatim}
+
+\subsubsection{who}
+Funkce who vypíše informace o aktuálně přihlášených uživatelích a jejich spuštěných terminálech.
+\begin{verbatim}
+who
+justify  tty8         Feb 23 08:58 (:0)
+justify  pts/0        Feb 23 10:27 (:0)
+\end{verbatim}
+
+\subsubsection{w}
+Pracuje podobně jako who, ale zobrazuje i co uživatelé dělají -- jejich procesy a procesorový čas.
+\begin{verbatim}
+w
+10:58:11 up  4:27,  2 users,  load average: 2.28, 1.84, 1.76
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+justify  tty8     :0               08:58    6days  6.45s  0.12s gdm-session-wor
+justify  pts/0    :0               10:27    3.00s  0.13s  0.02s w
+\end{verbatim}
+
+\subsubsection{whoami}
+\uv{Who am I?} tedy \uv{Kdo jsem?} -- odpovědí systému je jméno uživatele, které se ptá. Pokud marně přemýšlíte nad tím, kde se takový příkaz dá využít, představte si správce, který má přihlášených několik terminálů, každý pod jiným uživatelem, a potřebuje na nich provádět změny. Takto snadno zjistí, v čím terminálu se právě nachází.
+\begin{verbatim}
+whoami
+kareja00
+\end{verbatim}
+
+\subsubsection{groups}
+Vypíše skupiny, do kterých je uživatel přiřazený.
+\begin{verbatim}
+groups
+kareja00 adm dialout cdrom floppy sudo audio dip video plugdev netdev	
+\end{verbatim}
+
+\subsubsection{uptime}
+Zobrazí informace o systému, aktuální čas, jak dlouho systém běží, počet přihlášených uživatelů a jeho zatížení v poslední 1, 5 a 15 minutách.
+\begin{verbatim}
+uptime
+23:26:34 up  9:31,  0 users,  load average: 0.00, 0.00, 0.00
+\end{verbatim}
+
+\subsubsection{date}
+Provede jednoduchý výpis aktuálního datumu a času.
+\begin{verbatim}
+date
+Wed Sep 29 23:27:12 CEST 2021
+\end{verbatim}
+
+\subsubsection{man}
+Příkaz man je velice důležitý! Slouží k zobrazení manuálových stránek jednotlivých funkcí systému, kde lze najít veškeré informace o vstupních parametrech, popis, návratové hodnoty a často dokonce i hlubší náhled do funkcionality samotné funkce. I příkaz man má svou manuálovou stránku.
+\begin{verbatim}
+man man
+\end{verbatim}
+nebo třeba
+\begin{verbatim}
+man ping
+\end{verbatim}
+Pro ukončení zobrazené manuálové stránky se používá klávesa q. Manuálové stránky jsou obvykle rozdělené na 8 očíslovaných sekcí s tím, že parametrem můžeme specifikovat, ve které sekci se mají stránky hledat (následující tabulka platí pro BSD Unix a Linux).
+
+\begin{tabular}{l p{12cm}}
+1 & obecné/uživatelské příkazy\\
+2 & systémová volání\\
+3 & funkce knihovny jazyka C\\
+4 & speciální soubory (obvykle zařízení nacházející se v /dev) a ovladače\\
+5 & formáty konfiguračních souborů a obecné zásady\\
+6 & hry a spořiče obrazovky\\
+7 & různé\\
+8 & příkazy systémové administrace a deamons\\
+\end{tabular}
+
+\begin{verbatim}
+man 8 ping
+\end{verbatim}
+
+\subsubsection{whatis}
+Prohledává manuálové stránky a vrací krátký popis -- text NAME z manuálové stránky.
+\begin{verbatim}
+whatis ping
+ping (8)             - send ICMP ECHO_REQUEST to network hosts
+\end{verbatim} 
+
+\subsubsection{apropos}
+Apropos je opět funkce na prohledávání manuálových stránek a jejich DESCRIPTION částí. Pokud najde ve stránce text předaný v parametru, vrací jméno celé stránky na výstup.
+\begin{verbatim}
+apropos ping
+Compose (5)          - X client mappings for multi-key input sequences
+blkmapd (8)          - pNFS block layout mapping daemon
+getkeycodes (8)      - print kernel scancode-to-keycode mapping table
+iagno (6)            -	 A disk flipping game derived from Reversi.
+l2ping (8)           - Send L2CAP echo request and receive answer
+loadunimap (8)       - load the kernel unicode-to-font mapping table
+mapscrn (8)          - load screen output mapping table
+minissdpd (1)        - daemon keeping track of UPnP devices up
+nping (1)            - Network packet generation tool / ping utility
+ntfs-3g.usermap (8)  - NTFS Building a User Mapping File
+ping (8)             - send ICMP ECHO_REQUEST to network hosts
+...
+\end{verbatim}
+
+\subsubsection{help}
+Vypíše krátkou nápovědu k shellu se základním příkazy a jejich syntaxí.
+
+
+\subsubsection{type}
+Vrací, zda je předaný parametr příkaz nebo program. Pokud je to příkaz, pak je zahashovaný. Příkaz type nemá manuálové stránky.
+\begin{verbatim}
+type ping
+ping is /usr/bin/ping
+\end{verbatim}
+Ping je tedy příkaz -- dokonce vidíme, kde se nachází na disku. Oproti tomu například editor Bluefish\dots
+\begin{verbatim}
+type Bluefish
+-bash: type: Bluefish: not found
+\end{verbatim}
+už příkaz není. Je to program.
+
+\subsubsection{info}	
+Prohledávání a prohlížení hypertextové dokumentace.
+
+\subsubsection{pwd (print working directory)}
+Vytiskne jméno aktuálního/pracovního adresáře.
+\begin{verbatim}
+pwd
+/home/kareja00
+\end{verbatim}
+
+\subsubsection{cd (change directory)}
+Změna aktuálního adresáře na adresář zadaný cestou -- může být jak relativní, tak absolutní. Kromě ukázkových příkladů najdete další užitečné tvary příkazu cd v tabulce \ref{tabcd}.
+\begin{verbatim}
+justify@debian:/$ cd /home/justify/Dokumenty/
+justify@debian:~/Dokumenty$
+\end{verbatim}
+pro přechod do adresáře daného absolutní cestou
+
+\begin{verbatim}
+justify@debian:~/Dokumenty$ cd OS2/
+justify@debian:~/Dokumenty/OS2$
+\end{verbatim}
+pro přechod do adresáře daného relativní cestou
+\begin{table}
+\begin{center}
+\begin{tabular}{l | l}
+Příkaz & Cíl\\
+\hline
+cd .. & rodičovský adresář\\
+cd / & kořenový adresář\\
+cd & domovský adresář\\
+cd - & předchozí adresář\\
+\end{tabular}
+\end{center}
+\caption{Další použití příkazu cd}
+\label{tabcd}
+\end{table}
+
+\subsubsection{ls}
+Příkaz ls bez parametrů vypíše pouze obsah aktuálního adresáře. Přidáním parametrů můžeme docílit vypsání dalších informací o souborech, třeba informace o nastavených přístupových právech, vlastníkovi a časové známce -- čas poslední modifikace. Program ls standardně nevypisuje neviditelné soubory (což jsou soubory začínající tečkou), o jejich vypsání musíme požádat přidáním parametru -a. 
+
+Přepínačem -F dosáhneme dalšího zpřesnění výpisu -- za jméno se doplní jeden další znak, například lomítko / pro adresář nebo hvězdičku * pro spustitelný soubor. Jak už se pomalu stává zvykem, přepínačem -R dosáhneme rekurzivního výpisu obsahu adresářů.
+
+\begin{verbatim}
+ls -l
+total 12
+drwxr-xr-x 4 justify justify 4096 Feb 18 00:49 OS2
+drwxr-xr-x 5 justify justify 4096 Dec  6 19:42 PS
+drw-r-xr-x 2 justify justify 4096 Feb 23 16:02 pokusy
+\end{verbatim}
+Zde se trochu víc zaměříme na první písmeno na každém řádku výpisu. První písmeno nám specifikuje, o jaký typ souboru se jedná. Unixové systémy používají 7 typů souborů -- v tabulce \ref{tabfiles} je jejich výpis, těm, jejich význam není teď jasný, se budeme věnovat později.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{l | l}
+Příkaz & Cíl\\
+\hline
+- & obyčejný soubor\\
+d & adresář\\
+l & odkaz\\
+c & speciální odkaz\\
+s & socket\\
+p & pojmenovaná roura\\
+d & blokové zařízení\\
+\end{tabular}
+\end{center}
+\caption{Typy souborů v Unixových systémech}
+\label{tabfiles}
+\end{table}
 
 
 
 
+\begin{thebibliography}{0}
+  \bibitem[Vych03]{vychodilPrirucka} 
+  Vilém Vychodil: \emph{Linux: Příručka českého uživatele}. Computer Press 2003, Brno ISBN 80-7226-333-1.   
+\end{thebibliography}
 
 \end{document}
